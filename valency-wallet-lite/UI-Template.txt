@@ -1,0 +1,194 @@
+ ________________________________________
+|                                        | 
+|          THE VALENCY NETWORK           |
+|              Lite-Wallet               |      <-\
+|________________________________________|        |
+|                                        |        |
+|  Please Select One:                    |        |- Menu shows up at the start of the program
+|   1. Login using User + Pass           |        |
+|   2. Login using Private Key           |      <-/
+|   3. Exit                              |
+|________________________________________|
+                                         
+    -> 2                                        <- User Makes a Selection
+ ________________________________________
+|                                        |
+|  Enter the Private Key:                |      <- Selection Dependant: 1 = Input username + password and re-generate the private key + public address
+|________________________________________|                              2 = Input private key and re-generate the public address
+                                         
+    -> thisisaprivatekeythisisaprivatek         <- User Inputs the Private Key
+ ________________________________________
+|                                        |
+|            LOGIN SUCCESS:              |
+|    thisisapublicaddressthisisapubli    |      <- If Login is successful (if a public key can be generated from the private key input), display the public address
+|________________________________________|
+|                                        |
+|  Please Select One:                    |
+|   1. Check Balance                     |
+|   2. Create Transaction                |
+|   3. Previous Transactions             |      <- If local login (transaction data stored), receive new transactions from a node and update with any new incoming transactions, then display
+|   4. Save Transaction History          |      <- Saves the Transaction History Locally (unencrypted)
+|   5. Save Encrypted Wallet Locally     |      <- Saves the Wallet Locally (encrypted) - to make logging in, checking and making transactions faster next time
+|   6. Logout                            |      <- Logs out of the Account and displays the login console
+|________________________________________|
+                                         
+    -> 1                                        <- User Makes a Selection (1 to 6)
+ ________________________________________
+|                                        |
+|            WALLET BALANCE:             |
+|              2.789424vlnc              |      <- Display the Wallet Balance
+|________________________________________|
+|                                        |
+|  Please Select One:                    |
+|   1. Check Balance                     |
+|   2. Create Transaction                |
+|   3. Previous Transactions             |      <- If local login (transaction data stored), receive new transactions from a node and update with any new incoming transactions, then display
+|   4. Save Transaction History          |      <- Saves the Transaction History Locally (unencrypted)
+|   5. Save Encrypted Wallet Locally     |      <- Saves the Wallet Locally (encrypted) - to make logging in, checking and making transactions faster next time
+|   6. Logout                            |      <- Logs out of the Account and displays the login console
+|________________________________________|
+                                         
+    -> 2                                        <- User Makes a Selection (1 to 6)
+ ________________________________________
+|                                        |
+|  Please Select One                     |
+|   1. Single Transaction                |
+|   2. Multi-Transaction                 |
+|________________________________________|
+                                         
+    -> 1                                        <- User Makes a Selection
+ ________________________________________
+|                                        |
+|  Enter the Receiver Address:           |
+|________________________________________|
+
+    -> thisisareceiveraddressthisisarec         <- User Inputs the Receiver Address
+ ________________________________________
+|                                        |
+|  Enter the Transaction Amount(vlnc):   |
+|________________________________________|
+                                         
+    -> 20.315780                                <- User Inputs the Transaction Amount
+ ________________________________________
+|                                        |
+|  Use Onion Routing + Bridging?:        |
+|   1. Yes                               |
+|   2. No                                |
+|________________________________________|
+                                         
+    -> 1                                        <- User Makes a Selection
+ ________________________________________
+|                                        |
+|  Enter the # of Onion Nodes (3-5):     |
+|________________________________________|
+                                         
+    -> 5                                        <- User Makes a Selection
+ ________________________________________
+|                                        |
+|  Transaction Fee: 0.000002vlnc         |
+|  Proceed with Transaction?             |
+|   1. Yes                               |
+|   2. No                                |
+|________________________________________|
+                                         
+    -> 1                                        <- User Makes a Selection
+ ________________________________________
+|                                        |
+|          TRANSACTION SUCCESS           |      <- Display the Transaction Information/Summary
+|________________________________________|
+|                                        |
+|       3:27pm on the 14/05/2022         |        <- The Time and Date the Transaction Occured (UTC)
+|         300.241450 VLNC to:            |        <- The Amount Sent
+|   thisisapublicaddressthisisapubli     |        <- The Receiver Address
+|     [Using 5-Node Onion Routing]       |        <- The Onion Routing Information + number of nodes used (if applicable to the transaction)
+|________________________________________|
+|                                        |
+|  Please Select One:                    |
+|   1. Check Balance                     |
+|   2. Create Transaction                |
+|   3. Previous Transactions             |      <- If local login (transaction data stored), receive new transactions from a node and update with any new incoming transactions, then display
+|   4. Save Transaction History          |      <- Saves the Transaction History Locally (unencrypted)
+|   5. Save Encrypted Wallet Locally     |      <- Saves the Wallet Locally (encrypted) - to make logging in, checking and making transactions faster next time
+|   6. Logout                            |      <- Logs out of the Account and displays the login console
+|________________________________________|
+                                         
+    -> 3                                        <- User Makes a Selection (1 to 6)
+ ________________________________________
+|                                        |
+|         TRANSACTION HISTORY            |      <- Display the Transaction History (EVERYTHING CENTRED)
+|________________________________________|
+|         [TRANSACTION INDEX]            |        <- The transaction index (chronological order)
+|           [TIME AND DATE]              |        <- The Time and Date the Transaction Occured (UTC)
+|      [SENT OR RECEIVED: AMOUNT]        |        <- The Amount Sent or Received
+|     [TO OR FROM: PUBLIC ADDRESS]       |        <- The Address that Sent/Received the Valency
+|________________________________________|
+|            TRANSACTION 2               |        <- The transaction index (chronological order)
+|       3:27pm on the 14/05/2022         |        <- The Time and Date the Transaction Occured (UTC)
+|         300.241450 VLNC from:          |        <- The Amount Sent or Received
+|   thisisapublicaddressthisisapubli     |        <- The Address that Sent/Received the Valency
+|________________________________________|
+|            TRANSACTION 3               |        <- The transaction index (chronological order)
+|      12:59pm on the 14/05/2022         |        <- The Time and Date the Transaction Occured (UTC)
+|           29.154760 VLNC to:           |        <- The Amount Sent or Received
+|   thisisapublicaddressthisisapubli     |        <- The Address that Sent/Received the Valency
+|________________________________________|
+|                                        |
+|      END OF TRANSACTION HISTORY        |
+|________________________________________|
+|                                        |
+|  Please Select One:                    |
+|   1. Check Balance                     |
+|   2. Create Transaction                |
+|   3. Previous Transactions             |      <- If local login (transaction data stored), receive new transactions from a node and update with any new incoming transactions, then display
+|   4. Save Transaction History          |      <- Saves the Transaction History Locally (unencrypted)
+|   5. Save Encrypted Wallet Locally     |      <- Saves the Wallet Locally (encrypted) - to make logging in, checking and making transactions faster next time
+|   6. Logout                            |      <- Logs out of the Account and displays the login console
+|________________________________________|
+                                         
+    -> 4                                        <- User Makes a Selection (1 to 6)
+ ________________________________________
+|                                        |
+|       SAVED TRANSACTION HISTORY        |      <- Saves the Transaction History
+|________________________________________|
+|                                        |
+|  Please Select One:                    |
+|   1. Check Balance                     |
+|   2. Create Transaction                |
+|   3. Previous Transactions             |      <- If local login (transaction data stored), receive new transactions from a node and update with any new incoming transactions, then display
+|   4. Save Transaction History          |      <- Saves the Transaction History Locally (unencrypted)
+|   5. Save Encrypted Wallet Locally     |      <- Saves the Wallet Locally (encrypted) - to make logging in, checking and making transactions faster next time
+|   6. Logout                            |      <- Logs out of the Account and displays the login console
+|________________________________________|
+                                         
+    -> 5                                        <- User Makes a Selection (1 to 6)
+ ________________________________________
+|                                        |
+|          SAVED WALLET LOCALLY          |      <- Saves the Wallet (Encrypts it before saving)
+|________________________________________|
+|                                        |
+|  Please Select One:                    |
+|   1. Check Balance                     |
+|   2. Create Transaction                |
+|   3. Previous Transactions             |      <- If local login (transaction data stored), receive new transactions from a node and update with any new incoming transactions, then display
+|   4. Save Transaction History          |      <- Saves the Transaction History Locally (unencrypted)
+|   5. Save Encrypted Wallet Locally     |      <- Saves the Wallet Locally (encrypted) - to make logging in, checking and making transactions faster next time
+|   6. Logout                            |      <- Logs out of the Account and displays the login console
+|________________________________________|
+                                         
+    -> 6                                        <- User Makes a Selection (1 to 6)
+ ________________________________________
+|                                        |
+|        LOGGED OUT SUCCESSFULLY         |      <- Logs out and clears any sensitive data variables
+|________________________________________|
+|                                        |
+|  Please Select One:                    |
+|   1. Login using User + Pass           |
+|   2. Login using Private Key           |
+|   3. Exit                              |
+|________________________________________|
+                                         
+    -> 3                                        <- User Makes a Selection
+ ________________________________________                           
+|                                        |     <- Display Exit Message
+|              EXIT SUCCESS              | 
+|________________________________________|
