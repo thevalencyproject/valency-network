@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "structures/Blockchain.h"
 #include "valency-core/networking/onion-routing/Onion.h"
 #include "valency-core/file-recognition/file-writer/FileWriter.h"
 #include "valency-core/file-recognition/file-reader/FileReader.h"
@@ -14,7 +15,13 @@
 class WalletFunctions {
 private:
     std::string blockchainFilePath = "blockchain.vlnc";     // The blockchain file path
-    std::vector<Shard> blockchain;                          // The Valency Network Blockchain!
+    Blockchain blockchain;                                  // The Valency Network Blockchain!
+
+    Onion onion(2);
+    FileReader reader;
+    FileWriter writer;
+    NTRUencrypt ntru(3);
+    AESEncryption AES(256);
 
 public:
     WalletFunctions() {};
