@@ -23,8 +23,17 @@ private:
     NTRUencrypt ntru(3);
     AESEncryption AES(256);
 
+    // Network Nodes
+    std::string knownNodesFilePath = "knownnodes.vlnc";     // The known nodes file path
+    std::vector<Position3D> knownNodes;
+    std::vector<Position3D> activeNodes;
+
 public:
     WalletFunctions() {};
+
+    // Constant Refresh Functions (functions run constantly in their own threads)
+    void syncBlockchain();          // Syncs the Blockchain up with all nodes on the network
+    void syncActiveNodes();         // Syncs any active nodes (pushes address + IP + port into activeNodes vector) - also adds them to knownNodes vector + knownNodes file if they are unknown
 
     // Generator Functions
     std::string generatePublicKey(std::string privateKey);                                                                          // Generates the NTRUencrypt public key from the corresponding private key

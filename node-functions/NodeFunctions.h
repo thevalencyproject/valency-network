@@ -37,6 +37,7 @@ private:
     std::vector<Block> invalidBlocks;      // The Malicious Blocks buffer: Blocks that return invalid during validation come here
 
     // Other Nodes
+    std::string knownNodesFilePath = "knownnodes.vlnc";     // The known nodes file path
     std::vector<Position3D> knownNodes;
     std::vector<Position3D> activeNodes;
 
