@@ -41,9 +41,10 @@ public:
     std::pair<std::string, std::string> generateStealthKeyPair(std::string publicKey, std::string privateKey, unsigned int index);  // Index is the number of stealth key pairs already generated + 1
 
     // Transaction Functions
-    std::pair<std::string, double> requestTransactionFee(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);   // Returns the transaction fee and expiration time (min 30 seconds)
-    std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);       // Sends the transaction
-    
+    std::pair<std::string, double> requestTransactionFee(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);                           // Returns the transaction fee and expiration time (min 30 seconds)
+    std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);                               // Sends the transaction
+    std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes);     // Sends the transaction
+
     // Getter Functions
     Block getBlock(unsigned int shard, unsigned int block);                // Get a specific block from the blockchain
     std::vector<Block> getBlock(unsigned int shard, unsigned int block);   // Used to download the blockchain/parts of the blockchain
