@@ -51,11 +51,8 @@ private:
     // Malware Detection
     std::vector<Position3D> maliciousSignatures;
 
-    // Node Transaction Storage - stores all information the node knows about the transactions
-    std::vector<KnownTransactionDetails> transactions;
-
-public:
-    NodeFunctions() {};
+    // UI Information Functions
+    KnownTransactionDetails latestTransactionDetails;   // Stores the transaction details from the block that the node has validated
 
     // Constant Refresh Functions (functions run constantly in their own threads)
     void syncBlockchain();          // Syncs the Blockchain up with all other nodes on the network
@@ -66,6 +63,7 @@ public:
     void processInvalidBlocks();    // See's if any invalid blocks are malicious and takes action to ban similar blocks in the future
     void syncInvalidBlocks();       // Syncs any invalid blocks from other nodes to filter out similar malicious blocks network wide
     void syncKnownTransactions();   // Syncs any known transactions details (for transactions verified by the node) - acts as references for the node
+    void processSmartContracts();   // Processes any smart contracts stored on the network
 
     // File Functions
     void saveBlockchain();  // Saves the blockchain file (FileWriter)
@@ -77,7 +75,11 @@ public:
     bool verifyBlock();                     // Verifies the block - returns true if the block is valid
     bool verifyTraceableRingSignature();    // Verifies the ring signature stored inside of the block - returns true if the signature is valid
 
-    // Recording Functions
+public:
+    NodeFunctions() {};
+    void run();     // Runs the node
+
+    // Getter Functions
     KnownTransactionDetails getKnownTransactionDetails();   // Gets the KnownTransactionDetails for the last transaction the Node processed
 };
 
