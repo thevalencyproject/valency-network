@@ -17,6 +17,13 @@
 #include "valency-core/cryptography/traceable-ring-signatures/Ring-Signature.h"
 
 
+struct KnownTransactionDetails {
+    std::string time;
+    std::string date;
+    unsigned int numOfVerificationNodes;
+    double verificationReward;
+};
+
 class NodeFunctions {
 private:
     std::string blockchainFilePath = "blockchain.vlnc";     // The blockchain file path
@@ -44,6 +51,9 @@ private:
     // Malware Detection
     std::vector<Position3D> maliciousSignatures;
 
+    // Node Transaction Storage - stores all information the node knows about the transactions
+    std::vector<KnownTransactionDetails> transactions;
+
 public:
     NodeFunctions() {};
 
@@ -55,6 +65,7 @@ public:
     void processIncomingBlocks();   // Verifies any blocks in the incomingBlocks vector - loop every ~50ms (estimate): verified blocks go to outgoingBlocks vector - invalid verification go to invalidBlocks vector
     void processInvalidBlocks();    // See's if any invalid blocks are malicious and takes action to ban similar blocks in the future
     void syncInvalidBlocks();       // Syncs any invalid blocks from other nodes to filter out similar malicious blocks network wide
+    void syncKnownTransactions();   // Syncs any known transactions details (for transactions verified by the node) - acts as references for the node
 
     // File Functions
     void saveBlockchain();  // Saves the blockchain file (FileWriter)
@@ -65,6 +76,9 @@ public:
     // Verification Functions
     bool verifyBlock();                     // Verifies the block - returns true if the block is valid
     bool verifyTraceableRingSignature();    // Verifies the ring signature stored inside of the block - returns true if the signature is valid
+
+    // Recording Functions
+    KnownTransactionDetails getKnownTransactionDetails();   // Gets the KnownTransactionDetails for the last transaction the Node processed
 };
 
 #endif
