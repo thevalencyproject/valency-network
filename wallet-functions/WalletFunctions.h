@@ -22,6 +22,7 @@ private:
     FileWriter writer;
     NTRUencrypt ntru(3);
     AESEncryption AES(256);
+    WinternitzSignature winternitz;
 
     // Network Nodes
     std::string knownNodesFilePath = "knownnodes.vlnc";     // The known nodes file path
