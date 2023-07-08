@@ -3,7 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <thread>
 #include "structures/Blockchain.h"
+#include "structures/NodeTransactionInfo.h"
 #include "valency-core/custom-types/Position.h"
 #include "valency-core/networking/client/Client.h"
 #include "valency-core/networking/server/Server.h"
@@ -13,22 +15,12 @@
 #include "valency-core/file-recognition/file-reader/FileReader.h"
 #include "valency-core/cryptography/ntru-encryption/NTRUencrypt.h"
 #include "valency-core/cryptography/aes-encryption/AES-Encryption.h"
-#include "valency-core/algorithm/lzma-compression/LZMA-Compression.h"
+#include "valency-core/algorithms/lzma-compression/LZMA-Compression.h"
 #include "valency-core/cryptography/traceable-ring-signatures/Ring-Signature.h"
 
 
-struct KnownTransactionDetails {
-    std::string time;
-    std::string date;
-    unsigned int numOfVerificationNodes;
-    double verificationReward;
-};
-
 class NodeFunctions {
 private:
-    std::string blockchainFilePath = "blockchain.vlnc";     // The blockchain file path
-    Blockchain blockchain;
-
     Server server;
     Client client;
     Quicksort sort;
@@ -36,23 +28,30 @@ private:
     FileReader reader;
     FileWriter writer;
     NTRUencrypt ntru(3);
+    LZMACompression lzma;
     AESEncryption AES(256);
+
+    // Synced Identifiers (for multithreading)
+    bool blockchainSynced = false;
+    bool incomingBlocksSynced = false;
+    bool maliciousBlocksSynced = false;
+    bool knownNodesSynced = false;
 
     // Block Buffers
     std::vector<Block> incomingBlocks;     // The incoming block buffer: Blocks that are yet to be verified locally (can be verified by network before being verified locally)
     std::vector<Block> outgoingBlocks;     // The Outgoing Block buffer: Blocks verified locally but not verified network wide (network has not yet come to consensus)
     std::vector<Block> invalidBlocks;      // The Malicious Blocks buffer: Blocks that return invalid during validation come here
 
-    // Other Nodes
-    std::string knownNodesFilePath = "knownnodes.vlnc";     // The known nodes file path
-    std::vector<Position3D> knownNodes;
-    std::vector<Position3D> activeNodes;
+    // Readable/Writeable Files
+    std::string blockchainFilePath = "blockchain.vlnc";             // The blockchain file path
+    Blockchain blockchain;                                          // The Valency Network Blockchain!
 
-    // Malware Detection
-    std::vector<Position3D> maliciousSignatures;
+    std::string knownNodesFilePath = "knownnodes.vlnc";             // The known nodes file path
+    std::vector<Position3D> knownNodes;                             // The nodes that are known
+    std::vector<Position3D> activeNodes;                            // The nodes that are currently active
 
-    // UI Information Functions
-    KnownTransactionDetails latestTransactionDetails;   // Stores the transaction details from the block that the node has validated
+    std::string maliciousSignaturesFilePath = "malicious.vlnc";     // The malicious signatures file path
+    std::vector<Position3D> maliciousSignatures;                    // Any malicious signatures
 
     // Constant Refresh Functions (functions run constantly in their own threads)
     void syncBlockchain();          // Syncs the Blockchain up with all other nodes on the network
@@ -75,12 +74,15 @@ private:
     bool verifyBlock();                     // Verifies the block - returns true if the block is valid
     bool verifyTraceableRingSignature();    // Verifies the ring signature stored inside of the block - returns true if the signature is valid
 
+    // UI Information Functions
+    NodeTransactionDetails latestTransactionDetails;   // Stores the transaction details from the block that the node has validated
+
 public:
     NodeFunctions() {};
     void run();     // Runs the node
 
     // Getter Functions
-    KnownTransactionDetails getKnownTransactionDetails();   // Gets the KnownTransactionDetails for the last transaction the Node processed
+    NodeTransactionInfo getNodeTransactionInfo();   // Gets the KnownTransactionDetails for the last transaction the Node processed
 };
 
 #endif
