@@ -63,6 +63,26 @@ private:
     void syncInvalidBlocks();       // Syncs any invalid blocks from other nodes to filter out similar malicious blocks network wide
     void syncKnownTransactions();   // Syncs any known transactions details (for transactions verified by the node) - acts as references for the node
     void processSmartContracts();   // Processes any smart contracts stored on the network
+    // Server Communicate Functions (for the constant refresh function pointer inputs)
+    std::string syncBlockchainServer(std::string input);
+    std::string syncActiveNodesServer(std::string input);
+    std::string syncUnVerifiedBlocksServer(std::string input);
+    std::string syncVerifiedBlocksServer(std::string input);
+    std::string processIncomingBlocksServer(std::string input);
+    std::string processInvalidBlocksServer(std::string input);
+    std::string syncInvalidBlocksServer(std::string input);
+    std::string syncKnownTransactionsServer(std::string input);
+    std::string processSmartContractsServer(std::string input);
+    // Client Communicate Functions (for the constant refresh function pointer inputs)
+    std::string syncBlockchainClient(std::string input);
+    std::string syncActiveNodesClient(std::string input);
+    std::string syncUnVerifiedBlocksClient(std::string input);
+    std::string syncVerifiedBlocksClient(std::string input);
+    std::string processIncomingBlocksClient(std::string input);
+    std::string processInvalidBlocksClient(std::string input);
+    std::string syncInvalidBlocksClient(std::string input);
+    std::string syncKnownTransactionsClient(std::string input);
+    std::string processSmartContractsClient(std::string input);
 
     // File Functions
     void saveBlockchain();  // Saves the blockchain file (FileWriter)
