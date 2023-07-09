@@ -1,8 +1,6 @@
 #ifndef SAVEBLOCKCHAIN_H
 #define SAVEBLOCKCHAIN_H
 
-#include <string>
-#include <vector>
 #include "structures/Blockchain.h"
 #include "valency-core/file-recognition/file-writer/FileWriter.h"
 #include "valency-core/file-recognition/file-reader/FileReader.h"
@@ -25,7 +23,7 @@ struct SaveBlockchain {
                 -> Previous Block Hash
                 -> Time */
     SaveBlockchain(std::string filepath);   // Reads the blockchain
-    void save();                            // Saves the blockchain to the filepath (reverse if reading the file)
+    void save();                            // Saves the blockchain to the filepath (reverse of reading the file)
 };
 
 #endif

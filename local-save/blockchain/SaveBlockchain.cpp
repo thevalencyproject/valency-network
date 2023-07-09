@@ -3,7 +3,7 @@
 
 SaveBlockchain::SyncBlockchain(std::string filepath) {
     path = filepath; 
-    std::vector<std::string> data = reader.getData(path);
+    std::vector<std::string> data = reader.getData(&path);
 
     blockchain.id = data[0];                   // The blockchain unique identifier
     blockchain.length = stoul(data[1]);        // The shard length
@@ -68,4 +68,6 @@ void SaveBlockchain::save() {
         data[remainingBlocks + (i * 3) + 2] = blockchain.chain[blockchain.chain.size()].prevBlockHash;
         data[remainingBlocks + (i * 3) + 3] = blockchain.chain[blockchain.chain.size()].time;
     }
+
+    writer.createFile(data, &path);
 }
