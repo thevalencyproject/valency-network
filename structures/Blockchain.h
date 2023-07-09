@@ -9,6 +9,7 @@ struct Blockchain {
     std::vector<Shard> chain;
     
     unsigned int length;                            // The shard length
+    unsigned int numOfShards;                       // The number of shards in the chain
     std::string id = "Valency Network Testnet";     // A unique identifier for the network
 
     // initialShard is a blank shard - created with its own unique hash - initialBlock is the first block of the second shard
@@ -19,7 +20,7 @@ struct Blockchain {
         addBlock(initialBlock);
     };
 
-    void addShard(Shard shard) { chain.push_back(shard); };
+    void addShard(Shard shard) { chain.push_back(shard); numOfShards++; };
     void addBlock(Block block) {
         Shard new = chain.back().addBlock(block, length);
         if(new.prevShardHash.empty())
