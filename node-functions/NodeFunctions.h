@@ -4,9 +4,10 @@
 #include <string>
 #include <vector>
 #include <thread>
-#include "structures/Blockchain.h"
+#include "local-save/nodes/SaveNodes.h"
 #include "structures/NodeTransactionInfo.h"
 #include "valency-core/custom-types/Position.h"
+#include "local-save/blockchain/SaveBlockchain.h"
 #include "valency-core/networking/client/Client.h"
 #include "valency-core/networking/server/Server.h"
 #include "valency-core/networking/onion-routing/Onion.h"
@@ -43,15 +44,9 @@ private:
     std::vector<Block> invalidBlocks;      // The Malicious Blocks buffer: Blocks that return invalid during validation come here
 
     // Readable/Writeable Files
-    std::string blockchainFilePath = "blockchain.vlnc";             // The blockchain file path
-    Blockchain blockchain;                                          // The Valency Network Blockchain!
-
-    std::string knownNodesFilePath = "knownnodes.vlnc";             // The known nodes file path
-    std::vector<Position3D> knownNodes;                             // The nodes that are known
-    std::vector<Position3D> activeNodes;                            // The nodes that are currently active
-
-    std::string maliciousSignaturesFilePath = "malicious.vlnc";     // The malicious signatures file path
-    std::vector<Position3D> maliciousSignatures;                    // Any malicious signatures
+    SaveBlockchain blockchain("blockchain.vlnc");   // The Blockchain
+    SaveNodes knownNodes("known-nodes.vlnc");       // The Known Nodes
+    SaveNodes activeNodes("active-nodes.vlnc");     // The Nodes that are currently active
 
     // Constant Refresh Functions (functions run constantly in their own threads)
     void syncBlockchain();          // Syncs the Blockchain up with all other nodes on the network
@@ -81,12 +76,8 @@ private:
     std::string processIncomingBlocksClient(std::string input);
     std::string processInvalidBlocksClient(std::string input);
     std::string syncInvalidBlocksClient(std::string input);
-    std::string syncKnownTransactionsClient(std::string input);
-    std::string processSmartContractsClient(std::string input);
-
-    // File Functions
-    void saveBlockchain();  // Saves the blockchain file (FileWriter)
-    void readBlockchain();  // Reads the blockchain file (FileReader)
+    std::string syncKnownTransactionsClie
+#include "structures/Blockchain.h"lockchain file (FileReader)
     void saveKnownNodes();  // Saves the known nodes file (FileWriter)
     void readKnownNodes();  // Reads the known nodes file (FileReader)
 
