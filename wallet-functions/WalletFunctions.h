@@ -3,7 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "structures/Blockchain.h"
+#include "local-save/nodes/SaveNodes.h"
+#include "local-save/blockchain/SaveBlockchain.h"
 #include "valency-core/networking/onion-routing/Onion.h"
 #include "valency-core/file-recognition/file-writer/FileWriter.h"
 #include "valency-core/file-recognition/file-reader/FileReader.h"
@@ -14,9 +15,6 @@
 
 class WalletFunctions {
 private:
-    std::string blockchainFilePath = "blockchain.vlnc";     // The blockchain file path
-    Blockchain blockchain;                                  // The Valency Network Blockchain!
-
     Onion onion(2);
     FileReader reader;
     FileWriter writer;
@@ -24,17 +22,23 @@ private:
     AESEncryption AES(256);
     WinternitzSignature winternitz;
 
-    // Network Nodes
-    std::string knownNodesFilePath = "knownnodes.vlnc";     // The known nodes file path
-    std::vector<Position3D> knownNodes;
-    std::vector<Position3D> activeNodes;
+    // Readable/Writeable Files
+    SaveBlockchain blockchain("blockchain.vlnc");   // The Blockchain
+    SaveNodes knownNodes("known-nodes.vlnc");       // The Known Nodes
+    SaveNodes activeNodes("active-nodes.vlnc");     // The Nodes that are currently active
 
 public:
     WalletFunctions() {};
 
     // Constant Refresh Functions (functions run constantly in their own threads)
-    void syncBlockchain();          // Syncs the Blockchain up with all nodes on the network
-    void syncActiveNodes();         // Syncs any active nodes (pushes address + IP + port into activeNodes vector) - also adds them to knownNodes vector + knownNodes file if they are unknown
+    void syncBlockchain();      // Syncs the Blockchain up with all nodes on the network
+    void syncActiveNodes();     // Syncs any active nodes (pushes address + IP + port into activeNodes vector) - also adds them to knownNodes vector + knownNodes file if they are unknown
+    // Server Communicate Functions (for the constant refresh function pointer inputs)
+    std::string syncBlockchainServer(std::string input);
+    std::string syncActiveNodesServer(std::string input);
+    // Client Communicate Functions (for the constant refresh function pointer inputs)
+    std::string syncBlockchainClient(std::string input);
+    std::string syncActiveNodesClient(std::string input);
 
     // Generator Functions
     std::string generatePublicKey(std::string privateKey);                                                                          // Generates the NTRUencrypt public key from the corresponding private key
@@ -44,7 +48,7 @@ public:
     // Transaction Functions
     std::pair<std::string, double> requestTransactionFee(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);                           // Returns the transaction fee and expiration time (min 30 seconds)
     std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);                               // Sends the transaction
-    std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes);     // Sends the transaction
+    std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes);     // Sends the multi-transaction (also handles single index vectors for single transactions)
 
     // Getter Functions
     Block getBlock(unsigned int shard, unsigned int block);                // Get a specific block from the blockchain
