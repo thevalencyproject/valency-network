@@ -2,7 +2,11 @@
 
 
 SaveBlockchain::SyncBlockchain(std::string filepath) {
-    path = filepath; 
+    read(filepath);
+}
+
+void SaveBlockchain::read(std::string filepath) {
+    path = filepath;
     std::vector<std::string> data = reader.getData(&path);
 
     blockchain.id = data[0];                   // The blockchain unique identifier

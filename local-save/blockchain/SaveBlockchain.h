@@ -22,7 +22,10 @@ struct SaveBlockchain {
                 -> Block Hash
                 -> Previous Block Hash
                 -> Time */
-    SaveBlockchain(std::string filepath);   // Reads the blockchain
+    SaveBlockchain() {};                    // Make sure not to call save() before reading a file!
+    SaveBlockchain(std::string filepath);   // Reads the blockchain on construction
+
+    void read(std::string filepath);        // Reads the blockchain
     void save();                            // Saves the blockchain to the filepath (reverse of reading the file)
 };
 

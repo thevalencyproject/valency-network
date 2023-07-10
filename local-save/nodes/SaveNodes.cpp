@@ -2,6 +2,10 @@
 
 
 SaveNodes::SaveNodes(std::string filepath) {
+    read(filepath);
+}
+
+void SaveNodes::read(std::string filepath) {
     path = filepath;
     std::vector<std::string> data = reader.getData(&path);
 
