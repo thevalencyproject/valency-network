@@ -25,8 +25,10 @@ struct SaveBlockchain {
     SaveBlockchain() {};                    // Make sure not to call save() before reading a file!
     SaveBlockchain(std::string filepath);   // Reads the blockchain on construction
 
-    void read(std::string filepath);        // Reads the blockchain
-    void save();                            // Saves the blockchain to the filepath (reverse of reading the file)
+    void read(std::string filepath);                       // Reads the blockchain
+    void read(Blockchain* chain, std::string filepath);    // Reads the blockchain - stores blockchain at pointer
+    void save();                                           // Saves the blockchain to the filepath (reverse of reading the file)
+    void save(Blockchain* chain, std::string filepath);    // Saves the blockchain at the input pointer to the inputted filepath
 };
 
 #endif

@@ -17,8 +17,10 @@ struct SaveNodes {
     SaveNodes() {};                     // Make sure not to call save() before reading a file!
     SaveNodes(std::string filepath);    // Reads the nodes on construction
 
-    void read(std::string filepath);    // Reads the nodes
-    void save();                        // Saves the nodes to the filepath (reverse of reading the file)
+    void read(std::string filepath);                                // Reads the nodes - stores nodes + filepath locally
+    void read(std::vector<Position3D>* n, std::string filepath);    // Reads the nodes - stores nodes at pointer
+    void save();                                                    // Saves the nodes to the filepath (reverse of reading the file)
+    void save(std::vector<Position3D>* n, std::string filepath);    // Saves the nodes at the input pointer to the inputted filepath
 };
 
 #endif
