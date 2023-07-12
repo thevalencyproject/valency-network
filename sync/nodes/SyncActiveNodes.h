@@ -25,8 +25,11 @@ public:
 
     // Runs in its own core - constantly syncs the active nodes: Ensure the  knownNodes vector contains at least 1 active node
     //   -> Designed to take pointers to constantly changing vectors (changed in other threads)
-    void sync(std::vector<Position3D>* activeNodes, std::vector<Position3D>* knownNodes);                                // Non Onion-Routing
-    void sync(std::vector<Position3D>* activeNodes, std::vector<Position3D>* knownNodes, std::vector<NodeInfo> nodes);   // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
+    //   -> sync() is for wallets + misc programs and nodeSync() is for nodes
+    void sync(std::vector<Position3D>* activeNodes, std::vector<Position3D>* knownNodes);                                    // Non Onion-Routing
+    void sync(std::vector<Position3D>* activeNodes, std::vector<Position3D>* knownNodes, std::vector<NodeInfo> nodes);       // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
+    void nodeSync(std::vector<Position3D>* activeNodes, std::vector<Position3D>* knownNodes);                                // Non Onion-Routing
+    void nodeSync(std::vector<Position3D>* activeNodes, std::vector<Position3D>* knownNodes, std::vector<NodeInfo> nodes);   // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
 
     void read(std::vector<Position3D>* activeNodes, std::string filePath);    // Also has a file reading/writing functionality through the local-save framework (in valency-network)
     void save(std::vector<Position3D>* activeNodes, std::string filePath);    //   -> filePath should contain the file name / SaveNodes save;
