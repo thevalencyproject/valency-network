@@ -1,7 +1,7 @@
 #include "Sync.h"
 
 
-Sync::Sync(std::string blockchainPath, std::string activeNodesPath, std::string knownNodesPath) {
+Sync::Sync(bool node, std::string blockchainPath, std::string activeNodesPath, std::string knownNodesPath) {
     // Set file paths
     blockchainFilepath = blockchainPath;
     activeNodesFilepath = activeNodesPath;
@@ -11,9 +11,19 @@ Sync::Sync(std::string blockchainPath, std::string activeNodesPath, std::string 
     readBlockchain(); readActiveNodes(); readKnownNodes();
 
     // Continuously Sync (these open in new threads)
-    syncActiveNodes.sync(activeNodes, knownNodes);
-    syncKnownNodes.sync(knownNodes, activeNodes);
-    syncBlockchain.sync(blockchain, activeNodes);
+    switch(node) {
+    case 0:
+        syncActiveNodes.sync(activeNodes, knownNodes);
+        syncKnownNodes.sync(knownNodes, activeNodes);
+        syncBlockchain.sync(blockchain, activeNodes);
+        break;
+    case 1:
+        syncActiveNodes.nodeSync(activeNodes, knownNodes);
+        syncKnownNodes.nodeSync(knownNodes, activeNodes);
+        syncBlockchain.nodeSync(blockchain, activeNodes);
+        break;
+    }
+    
 }
 
 Sync::~Sync() { saveBlockchain(); saveBlockchain(); saveBlockchain(); }     // Save the data to file
