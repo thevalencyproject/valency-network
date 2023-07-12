@@ -19,7 +19,13 @@ private:
     Onion onion(2);
     SaveNodes save;
 
-    std::string communicate(std::string input);     // Passed into the networking frameworks (client, server, and onion can use same function)
+    std::string convertNode(Position3D* node);                  // Converts a node into string form - used for network communication
+    std::string convertNode(std::vector<Position3D>* nodes);    // Converts a vector of nodes into string form - used for network communication
+    Position3D convertString(std::string node);                 // Converts string to a node (string should come from convertNode() function)
+    std::vector<Position3D> convertString(std::string nodes);   // Converts string to a vector of nodes (string should come from convertNode() function)
+
+    std::string communicate(std::string input);         // Passed into the networking frameworks (client, server, and onion can use same function)
+    std::string nodeCommunicate(std::string input);     // Node Only: Passed into the networking frameworks (client, server, and onion can use same function)
 
 public:
     SyncKnownNodes() {};

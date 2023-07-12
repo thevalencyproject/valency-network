@@ -22,7 +22,13 @@ private:
     Onion onion(2);
     SaveBlockchain save;
 
-    std::string communicate(std::string input);     // Passed into the networking frameworks (client, server, and onion can use same function)
+    std::string convertBlock(Block* block);                 // Converts a block into string form - used for network communication
+    std::string convertBlock(std::vector<Block>* blocks);   // Converts a vector of blocks into string form - used for network communication
+    Block convertString(std::string block);                 // Converts string to a block (string should come from convertBlock() function)
+    std::vector<Block> convertString(std::string blocks);   // Converts string to a vector of blocks (string should come from convertBlock() function)
+
+    std::string communicate(std::string input);         // Passed into the networking frameworks (client, server, and onion can use same function)
+    std::string nodeCommunicate(std::string input);     // Node Only: Passed into the networking frameworks (client, server, and onion can use same function)
 
 public:
     SyncBlockchain() {};
