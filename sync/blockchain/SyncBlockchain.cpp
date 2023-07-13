@@ -151,106 +151,77 @@ std::vector<Block> convertString(std::string block) {
 
 }
 
-/* We can do the following:
-    -> Ask for how many shards + blocks are in the blockchain
-    -> Ask for a range of shards + blocks
-    -> Ask for a specific shard / block
-    
-    -> Receive how many shards + blocks are in the blockchain
-    -> Receive the range of shards + blocks requested
-    -> Receive the specific shard / block
-
-    // Clients cannot give out data
-    -> Give how many shards + blocks are in the blockchain
-    -> Give the shards + blocks requested
-    -> Give the specific shard / block requested
-
-    Nodes: Act as both a server and client, acting as a server to fulfill requests, and acting as a client to send requests to other nodes.
-    Clients: Act as a client, only sending requests to the nodes
-*/
 std::string SyncBlockchain::communicate(std::string input) {    // Wallet - STILL NEED TO DO!!!
     // Only send receive data (request is sent out in initial message)
     //  -> Initial Message should be number of shards + blocks request
     
     if(input[0] == "0") {   // Receive the shards + blocks requested
-        
+        input.erase(0);     // Erase the function index identifier
+
+        // Loop until a '.' is found, Left = Shard Num, Right = Block Num
+        std::pair<int, int> position;   // first = shardnum, second = blocknum
+        for(int i = 0; i < input.size(); i++) {
+            if(input[i] == '.') {
+                position.first = stoi(input.substr(0, i - 1));
+                position.second = stoi(input.substr(i, input.size() - i - 1));
+
+                break;
+            }
+        }
+
+        // Check result against things - if things dont match, ask for blocks required
+        std::pair<int, int> localPos;
+        localPos.first = chain->numOfShards;
+        localPos.second = chain->chain.back().shard.size();
+        if(localPos.first != position.first || localPos.second != position.second) {
+            // Send the localPosition to the node - this will send back the required blocks to get updated
+            return "1" + std::to_string(localPos.first) + "." + std::to_string(localPos.second);
+        }
+    }
+
+    if(input[0] == "1") {   // Get the blocks returned by the individual node and store them
+
     }
 }
 std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
     // Only give out details - dont send requests
-    if(input[0] == "0")      // Return number of shards + blocks in current shard (shard being filled up)
+    if(input[0] == "0")     // Return number of shards + blocks in current shard (shard being filled up)
         return "0" + std::to_string(chain->numOfShards) + "." + std::to_string(chain->chain.back().shard.size());
     
-    if(input[0] == "1") {    // Return the latest block 
-        return convertBlock(&chain.chain.back().shard.back());
-    }
+    if(input[0] == "1") {   // Return the blocks after the position
+        input.erase(0);     // Erase the function index identifier
 
-    if(input[0] == "2") {   // Return the requested block
-        // Get the block position from the input string
-        std::pair<int, int> blockPosition;
+        // Loop until a '.' is found, Left = Shard Num, Right = Block Num
+        std::pair<int, int> position;   // first = shardnum, second = blocknum
         for(int i = 0; i < input.size(); i++) {
-            if(input[i] = '.') {
-                blockPosition.first = input.substr(0, i - 1);
-                input.erase(0, i);
-                
-                for(int j = 0; j < input.size(); j++) {
-                    if(input[j] == '.') {
-                        blockPosition.second = input.substr(0, j - 1);
-                        input.erase(0, j);
-
-                        break;
-                    }
-                }
-            
-                break;
-            }
-        }
-
-        return convertBlock(&chain.chain[blockPositions[i].first].shard[blockPositions[i].second]);
-    }
-
-    if(input[0] == "3") {    // Return the requested blocks
-        int numOfBlocks;
-        std::vector<std::pair<int, int>> blockPositions;
-        for(int i = 1; i < input.size(); i++) {
             if(input[i] == '.') {
-                numOfBlocks = input.substr(1, i - 1);
-                input.erase(0, i);
+                position.first = stoi(input.substr(0, i - 1));
+                position.second = stoi(input.substr(i, input.size() - i - 1));
 
                 break;
             }
         }
 
-        for(int i = 0; i < numOfBlocks; i++) {
-            std::pair<int, int> temp;
-
-            for(int j = 0; j < input.size(); j++) {
-                if(input[j] = '.') {
-                    temp.first = input.substr(0, j - 1);
-                    input.erase(0, j);
-                    
-                    for(int k = 0; k < input.size(); k++) {
-                        if(input[k] == '.') {
-                            temp.second = input.substr(0, k - 1);
-                            input.erase(0, k);
-
-                            break;
-                        }
-                    }
-                
-                    break;
-                }
-            }
-
-            blockPositions.push_back(temp);
-        }
-
-        // Get all the blocks and add them to the block vector
+        if(position.first == chain->numOfShards && position.second == chain->chain.back().shard.size())
+            return "3";     // Return blockchain already up to date
+        
+        // Fill the block vector
         std::vector<Block> requestedBlocks;
-        for(int i = 0; i < blockPositions.size(); i++)
-            requestedBlocks.push_back(chain.chain[blockPositions[i].first].shard[blockPositions[i].second]);
 
-        return convertBlock(&requestedBlocks);
+        // FIRST: Fill semi-filled shard: ShardPos = position.first, BlockPos = i
+        for(int i = position.second; i < chain->length; i++)
+            requestedBlocks.push_back(chain->chain[position.first].shard[i]);
+
+        // SECOND: Fill non-filled shards: ShardPos = i, BlockPos = j
+        for(int i = position.first + 1; i < chain->numOfShards - 1; i++)
+            for(int j = 0; j < chain->length; j++)
+                requestedBlocks.push_back(chain->chain[i].shard[j]);
+
+        // THIRD: Fill final shard (up to block amount): ShardPos = chain->chain.size(), BlockPos = i
+        for(int i = 0; i < chain->chain.back().shard.size(); i++)
+            requestedBlocks.push_back(chain->chain[chain->chain.size()].shard[i]);
+
+        return "1" + convertBlock(&requestedBlocks);
     }
 }
 
