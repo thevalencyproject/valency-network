@@ -1,28 +1,75 @@
 #include "SyncBlockchain.h"
 
 
+void SyncBlockchain::validate(int numOfActiveNodes) {
+    while(1) {
+        while(unVerifiedBlocks.size() < numOfActiveNodes - 2)      // Wait for until unVerifiedBlocks fills up
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+
+        // Verify
+        std::vector<std::pair<int, int>> counter;    // first int holds index of unique block vector, whilst the int counts how many instances of it occurs
+        for(int i = 0; i < unVerifiedBlocks.size(); i++) {
+            // If the block vector is unseen before, add it to the vector of pairs... if it is seen, increment the instance counter
+            bool seen = false;
+            for(int j = 0; j < counter.size(); j++) {   // Check if it already exists in the counter
+                if(unverifiedBlocks[i] == unverifiedBlocks[counter[j].first]) {
+                    counter[j].second++;    // Increment the instance counter
+                    seen = true;
+                    break;
+                }
+            }
+            if(seen == false) {     // Not seen, therefore add to counter vector
+                std::pair<int, int> temp;
+                temp.first = i;
+                temp.second = 1;
+            }
+        }
+
+        // Sort the counter vector by the highest number
+        int highest, index;
+        for(int i = 0; i < counter.size(); i++) {
+            if(counter[i].second > highest) {
+                highest = counter[i].second;
+                index = counter[i].first;
+            }
+        }
+
+        // Set the blockchain to the block vector with the highest instance counter in the counter vector
+        for(int i = 0; i < unverifiedBlocks[index].size(); i++)
+            chain->addBlock(unverifiedBlocks[index][i]);
+
+        unVerifiedBlocks.clear();   // Clear the vector
+    }
+}
+
 void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {   // Non Onion-Routing
     chain = blockchain;
 
-    // Run the client
-    for(int i = 0; i < activeNodes.size(); i++)
-        std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, "0"));    // Initially request the # of shards + # of blocks in latest shard
+    std::thread v(validate(activeNodes.size()));        // Validate the block vectors
+
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++)     // Run the client
+            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, "0"));    // Initially request the # of shards + # of blocks in latest shard
+    }
 }
 
 void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {  // Onion Routing
     chain = blockchain;
 
-    // Run the onion-client
-    for(int i = 0; i < activeNodes.size(); i++) {
-        NodeInfo n;                                // Add the destination to the end of the nodes vector
-        n.address = activeNodes[i].x;
-        n.location.address = activeNodes[i].y;
-        n.location.port = activeNodes[i].z
-        nodes.push_back(n);
+    std::thread v(validate(activeNodes.size()));        // Validate the block vectors
 
-        std::thread c(onion.onionRouting(nodes, "0", communicate));     // Initially request the # of shards + # of blocks in latest shard
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++) {   // Run the onion-client
+            NodeInfo n;                                 // Add the destination to the end of the nodes vector
+            n.address = activeNodes[i].x;
+            n.location.address = activeNodes[i].y;
+            n.location.port = activeNodes[i].z
+            nodes.push_back(n);
 
-        nodes.pop_back();   // Delete the destination info
+            std::thread c(onion.onionRouting(nodes, "0", communicate));     // Initially request the # of shards + # of blocks in latest shard
+
+            nodes.pop_back();   // Delete the destination info
+        }
     }
 }
 
@@ -30,29 +77,32 @@ void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {
     chain = blockchain;
     
     std::thread s(server.run(8080, nodeCommunicate));     // Run the node server
+    std::thread v(validate(activeNodes.size()));          // Validate the block vectors
 
-    // Run the client
-    for(int i = 0; i < activeNodes.size(); i++)
-        std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, "0"));    // Initially request the # of shards + # of blocks in latest shard
-
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++)     // Run the client
+            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, "0"));    // Initially request the # of shards + # of blocks in latest shard
+    }
 }
 
 void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
     chain = blockchain;
 
     std::thread s(server.run(8080, nodeCommunicate));     // Run the server
+    std::thread v(validate(activeNodes.size()));          // Validate the block vectors
 
-    // Run the onion-client
-    for(int i = 0; i < activeNodes.size(); i++) {
-        NodeInfo n;                                // Add the destination to the end of the nodes vector
-        n.address = activeNodes[i].x;
-        n.location.address = activeNodes[i].y;
-        n.location.port = activeNodes[i].z
-        nodes.push_back(n);
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++) {    // Run the onion-client
+            NodeInfo n;                                  // Add the destination to the end of the nodes vector
+            n.address = activeNodes[i].x;
+            n.location.address = activeNodes[i].y;
+            n.location.port = activeNodes[i].z
+            nodes.push_back(n);
 
-        std::thread c(onion.onionRouting(nodes, "0", communicate));     // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(onion.onionRouting(nodes, "0", communicate));     // Initially request the # of shards + # of blocks in latest shard
 
-        nodes.pop_back();   // Delete the destination info
+            nodes.pop_back();   // Delete the destination info
+        }
     }
 }
 
@@ -151,10 +201,10 @@ std::vector<Block> convertString(std::string block) {
 
 }
 
-std::string SyncBlockchain::communicate(std::string input) {    // Wallet - STILL NEED TO DO!!!
+std::string SyncBlockchain::communicate(std::string input) {    // Wallet
     // Only send receive data (request is sent out in initial message)
     //  -> Initial Message should be number of shards + blocks request
-    
+
     if(input[0] == "0") {   // Receive the shards + blocks requested
         input.erase(0);     // Erase the function index identifier
 
@@ -179,8 +229,10 @@ std::string SyncBlockchain::communicate(std::string input) {    // Wallet - STIL
         }
     }
 
-    if(input[0] == "1") {   // Get the blocks returned by the individual node and store them
-
+    if(input[0] == "1") {                                   // Get the blocks returned by the individual node and store them
+        input.erase(0);                                     // Erase the function index identifier
+        unverifiedBlocks.push_back(convertString(input));   // Add the unverified blocks to the vector
+        return "2";                                         // Return the quit code                                   
     }
 }
 std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
@@ -203,7 +255,7 @@ std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
         }
 
         if(position.first == chain->numOfShards && position.second == chain->chain.back().shard.size())
-            return "3";     // Return blockchain already up to date
+            return "2";     // Return blockchain already up to date
         
         // Fill the block vector
         std::vector<Block> requestedBlocks;
@@ -223,6 +275,9 @@ std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
 
         return "1" + convertBlock(&requestedBlocks);
     }
+
+    if(input[0] == "2")   // Client is quitting - send the quit message
+        return "/quit";
 }
 
 
