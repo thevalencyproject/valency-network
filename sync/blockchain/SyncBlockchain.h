@@ -15,14 +15,15 @@ private:
     Blockchain* chain;
     std::vector<Block> unVerifiedBlocks;    // The blocks that some nodes have sent, but others havent (not 100% verified yet)
 
-    int nodesRequiredForVerification;       // The number of nodes required for a block to be added: 50% of all nodes + 1 node
+    std::vector<std::vector<Block>> unverifiedBlocks;    // The received blocks from the nodes
+    void validate(int numOfActiveNodes);                 // Validates the incoming blocks from the nodes
 
     Server server;
     Client client;
     Onion onion(2);
     SaveBlockchain save;
 
-    std::string convertBlock(Block* block);                 // Converts a block into string form - used for network communication
+    std::string convertBlock(Block* block);     // Converts a block into string form - used for network communication
     std::string convertBlock(std::vector<Block>* blocks);   // Converts a vector of blocks into string form - used for network communication
     Block convertString(std::string block);                 // Converts string to a block (string should come from convertBlock() function)
     std::vector<Block> convertString(std::string blocks);   // Converts string to a vector of blocks (string should come from convertBlock() function)
