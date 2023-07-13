@@ -13,9 +13,7 @@
 struct SyncBlockchain {
 private:
     Blockchain* chain;
-    std::vector<Block> unVerifiedBlocks;    // The blocks that some nodes have sent, but others havent (not 100% verified yet)
-
-    std::vector<std::vector<Block>> unverifiedBlocks;    // The received blocks from the nodes
+    std::vector<std::vector<Block>> unverifiedBlocks;    // The blocks that some nodes have sent, but others havent (not 100% verified yet)
     void validate(int numOfActiveNodes);                 // Validates the incoming blocks from the nodes
 
     Server server;
