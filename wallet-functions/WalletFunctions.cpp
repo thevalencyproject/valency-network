@@ -1,14 +1,6 @@
 #include "WalletFunctions.h"
 
 
-void WalletFunctions::syncBlockchain() {
-
-}
-
-void WalletFunctions::syncActiveNodes() {
-
-}
-
 std::string WalletFunctions::generatePublicKey(std::string privateKey) {
     return ntru.generatePublicKey(privateKey);
 }
@@ -36,7 +28,7 @@ std::pair<std::string, double> WalletFunctions::requestTransactionFee(bool singl
 }
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes) {
-
+    
 }
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes) {

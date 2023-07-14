@@ -3,8 +3,10 @@
 
 #include <string>
 #include <vector>
+#include "sync/Sync.h"
 #include "local-save/nodes/SaveNodes.h"
 #include "local-save/blockchain/SaveBlockchain.h"
+#include "valency-core/networking/client/Client.h"
 #include "valency-core/networking/onion-routing/Onion.h"
 #include "valency-core/file-recognition/file-writer/FileWriter.h"
 #include "valency-core/file-recognition/file-reader/FileReader.h"
@@ -15,30 +17,18 @@
 
 class WalletFunctions {
 private:
+    Client client;
     Onion onion(2);
     FileReader reader;
     FileWriter writer;
     NTRUencrypt ntru(3);
     AESEncryption AES(256);
     WinternitzSignature winternitz;
-
-    // Readable/Writeable Files
-    SaveBlockchain blockchain("blockchain.vlnc");   // The Blockchain
-    SaveNodes knownNodes("known-nodes.vlnc");       // The Known Nodes
-    SaveNodes activeNodes("active-nodes.vlnc");     // The Nodes that are currently active
+    
+    Sync sync(false, "blockchain.vlnc", "activenodes.vlnc", "knownnodes.vlnc");
 
 public:
     WalletFunctions() {};
-
-    // Constant Refresh Functions (functions run constantly in their own threads)
-    void syncBlockchain();      // Syncs the Blockchain up with all nodes on the network
-    void syncActiveNodes();     // Syncs any active nodes (pushes address + IP + port into activeNodes vector) - also adds them to knownNodes vector + knownNodes file if they are unknown
-    // Server Communicate Functions (for the constant refresh function pointer inputs)
-    std::string syncBlockchainServer(std::string input);
-    std::string syncActiveNodesServer(std::string input);
-    // Client Communicate Functions (for the constant refresh function pointer inputs)
-    std::string syncBlockchainClient(std::string input);
-    std::string syncActiveNodesClient(std::string input);
 
     // Generator Functions
     std::string generatePublicKey(std::string privateKey);                                                                          // Generates the NTRUencrypt public key from the corresponding private key
