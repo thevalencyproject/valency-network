@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include "sync/Sync.h"
 #include "local-save/nodes/SaveNodes.h"
 #include "structures/NodeTransactionInfo.h"
 #include "valency-core/custom-types/Position.h"
@@ -28,29 +29,18 @@ private:
     OnionNode onion;
     FileReader reader;
     FileWriter writer;
-    NTRUencrypt ntru(3);
     LZMACompression lzma;
+    
+    NTRUencrypt ntru(3);
     AESEncryption AES(256);
-
-    // Synced Identifiers (for multithreading)
-    bool blockchainSynced = false;
-    bool incomingBlocksSynced = false;
-    bool maliciousBlocksSynced = false;
-    bool knownNodesSynced = false;
+    Sync sync(true, "blockchain.vlnc", "activenodes.vlnc", "knownnodes.vlnc");
 
     // Block Buffers
     std::vector<Block> incomingBlocks;     // The incoming block buffer: Blocks that are yet to be verified locally (can be verified by network before being verified locally)
     std::vector<Block> outgoingBlocks;     // The Outgoing Block buffer: Blocks verified locally but not verified network wide (network has not yet come to consensus)
     std::vector<Block> invalidBlocks;      // The Malicious Blocks buffer: Blocks that return invalid during validation come here
 
-    // Readable/Writeable Files
-    SaveBlockchain blockchain("blockchain.vlnc");   // The Blockchain
-    SaveNodes knownNodes("known-nodes.vlnc");       // The Known Nodes
-    SaveNodes activeNodes("active-nodes.vlnc");     // The Nodes that are currently active
-
     // Constant Refresh Functions (functions run constantly in their own threads)
-    void syncBlockchain();          // Syncs the Blockchain up with all other nodes on the network
-    void syncActiveNodes();         // Syncs any active nodes (pushes address + IP + port into activeNodes vector) - also adds them to knownNodes vector + knownNodes file if they are unknown
     void syncUnVerifiedBlocks();    // Syncs any unverified blocks from other nodes
     void syncVerifiedBlocks();      // Syncs any valid blocks from the outgoingNodes vector (also gets valid blocks from other nodes)
     void processIncomingBlocks();   // Verifies any blocks in the incomingBlocks vector - loop every ~50ms (estimate): verified blocks go to outgoingBlocks vector - invalid verification go to invalidBlocks vector
@@ -59,8 +49,6 @@ private:
     void syncKnownTransactions();   // Syncs any known transactions details (for transactions verified by the node) - acts as references for the node
     void processSmartContracts();   // Processes any smart contracts stored on the network
     // Server Communicate Functions (for the constant refresh function pointer inputs)
-    std::string syncBlockchainServer(std::string input);
-    std::string syncActiveNodesServer(std::string input);
     std::string syncUnVerifiedBlocksServer(std::string input);
     std::string syncVerifiedBlocksServer(std::string input);
     std::string processIncomingBlocksServer(std::string input);
@@ -69,17 +57,13 @@ private:
     std::string syncKnownTransactionsServer(std::string input);
     std::string processSmartContractsServer(std::string input);
     // Client Communicate Functions (for the constant refresh function pointer inputs)
-    std::string syncBlockchainClient(std::string input);
-    std::string syncActiveNodesClient(std::string input);
     std::string syncUnVerifiedBlocksClient(std::string input);
     std::string syncVerifiedBlocksClient(std::string input);
     std::string processIncomingBlocksClient(std::string input);
     std::string processInvalidBlocksClient(std::string input);
     std::string syncInvalidBlocksClient(std::string input);
-    std::string syncKnownTransactionsClie
-#include "structures/Blockchain.h"lockchain file (FileReader)
-    void saveKnownNodes();  // Saves the known nodes file (FileWriter)
-    void readKnownNodes();  // Reads the known nodes file (FileReader)
+    std::string syncKnownTransactionsClient(std::string input);
+    std::string processSmartContractsClient(std::string input);
 
     // Verification Functions
     bool verifyBlock();                     // Verifies the block - returns true if the block is valid
