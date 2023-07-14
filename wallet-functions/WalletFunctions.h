@@ -18,13 +18,13 @@
 class WalletFunctions {
 private:
     Client client;
-    Onion onion(2);
     FileReader reader;
     FileWriter writer;
-    NTRUencrypt ntru(3);
-    AESEncryption AES(256);
     WinternitzSignature winternitz;
     
+    Onion onion(2);
+    NTRUencrypt ntru(3);
+    AESEncryption AES(256);
     Sync sync(false, "blockchain.vlnc", "activenodes.vlnc", "knownnodes.vlnc");
 
 public:
