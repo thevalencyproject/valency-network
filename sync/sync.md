@@ -10,7 +10,7 @@ Some future updates include, but are not limited to:
 4. Dynamically reducing the wait threshold based on various network statistics - this would decrease network latency and increase network efficiency.
 5. Algorithm optimization (block selection, string conversion, etc.) - this will increase efficiency and reduce network latency.
 
-Nodes: Act as both a server and client, acting as a server to fulfill requests, and acting as a client to send requests to other nodes.
+Nodes: Act as both a server and client, acting as a server to fulfill requests, and acting as a client to send requests to other nodes. Blockchain Syncing Port: 8080, Known Nodes Syncing Port: 8081, Active Nodes Syncing Port: 8082.
 
 Clients: Act as a client, only sending requests to the nodes
 <br><br>
