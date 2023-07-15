@@ -49,7 +49,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activ
 
     while(1) {
         for(int i = 0; i < activeNodes.size(); i++)     // Run the client
-            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, "0"));    // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of shards + # of blocks in latest shard
     }
 }
 
@@ -66,7 +66,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activ
             n.location.port = activeNodes[i].z
             nodes.push_back(n);
 
-            std::thread c(onion.onionRouting(nodes, "0", communicate));     // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of shards + # of blocks in latest shard
 
             nodes.pop_back();   // Delete the destination info
         }
@@ -81,7 +81,7 @@ void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {
 
     while(1) {
         for(int i = 0; i < activeNodes.size(); i++)     // Run the client
-            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, "0"));    // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of shards + # of blocks in latest shard
     }
 }
 
@@ -99,7 +99,7 @@ void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std:
             n.location.port = activeNodes[i].z
             nodes.push_back(n);
 
-            std::thread c(onion.onionRouting(nodes, "0", communicate));     // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of shards + # of blocks in latest shard
 
             nodes.pop_back();   // Delete the destination info
         }
@@ -205,7 +205,7 @@ std::string SyncBlockchain::communicate(std::string input) {    // Wallet
     // Only send receive data (request is sent out in initial message)
     //  -> Initial Message should be number of shards + blocks request
 
-    if(input[0] == "0") {   // Receive the shards + blocks requested
+    if(input[0] == '0') {   // Receive the shards + blocks requested
         input.erase(0);     // Erase the function index identifier
 
         // Loop until a '.' is found, Left = Shard Num, Right = Block Num
@@ -225,22 +225,22 @@ std::string SyncBlockchain::communicate(std::string input) {    // Wallet
         localPos.second = chain->chain.back().shard.size();
         if(localPos.first != position.first || localPos.second != position.second) {
             // Send the localPosition to the node - this will send back the required blocks to get updated
-            return "1" + std::to_string(localPos.first) + "." + std::to_string(localPos.second);
+            return '1' + std::to_string(localPos.first) + '.' + std::to_string(localPos.second);
         }
     }
 
-    if(input[0] == "1") {                                   // Get the blocks returned by the individual node and store them
+    if(input[0] == '1') {                                   // Get the blocks returned by the individual node and store them
         input.erase(0);                                     // Erase the function index identifier
         unverifiedBlocks.push_back(convertString(input));   // Add the unverified blocks to the vector
-        return "2";                                         // Return the quit code                                   
+        return '2';                                         // Return the quit code                                   
     }
 }
 std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
     // Only give out details - dont send requests
-    if(input[0] == "0")     // Return number of shards + blocks in current shard (shard being filled up)
-        return "0" + std::to_string(chain->numOfShards) + "." + std::to_string(chain->chain.back().shard.size());
+    if(input[0] == '0')     // Return number of shards + blocks in current shard (shard being filled up)
+        return '0' + std::to_string(chain->numOfShards) + '.' + std::to_string(chain->chain.back().shard.size());
     
-    if(input[0] == "1") {   // Return the blocks after the position
+    if(input[0] == '1') {   // Return the blocks after the position
         input.erase(0);     // Erase the function index identifier
 
         // Loop until a '.' is found, Left = Shard Num, Right = Block Num
@@ -255,7 +255,7 @@ std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
         }
 
         if(position.first == chain->numOfShards && position.second == chain->chain.back().shard.size())
-            return "2";     // Return blockchain already up to date
+            return '2';     // Return blockchain already up to date
         
         // Fill the block vector
         std::vector<Block> requestedBlocks;
@@ -273,10 +273,10 @@ std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
         for(int i = 0; i < chain->chain.back().shard.size(); i++)
             requestedBlocks.push_back(chain->chain[chain->chain.size()].shard[i]);
 
-        return "1" + convertBlock(&requestedBlocks);
+        return '1' + convertBlock(&requestedBlocks);
     }
 
-    if(input[0] == "2")   // Client is quitting - send the quit message
+    if(input[0] == '2')   // Client is quitting - send the quit message
         return "/quit";
 }
 
