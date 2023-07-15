@@ -227,6 +227,8 @@ std::string SyncBlockchain::communicate(std::string input) {    // Wallet
             // Send the localPosition to the node - this will send back the required blocks to get updated
             return '1' + std::to_string(localPos.first) + '.' + std::to_string(localPos.second);
         }
+
+        return '2';     // Blockchain is up-to-date - end connection
     }
 
     if(input[0] == '1') {                                   // Get the blocks returned by the individual node and store them
