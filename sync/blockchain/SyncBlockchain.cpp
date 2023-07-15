@@ -73,7 +73,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activ
     }
 }
 
-void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {
+void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {
     chain = blockchain;
     
     std::thread s(server.run(8080, nodeCommunicate));     // Run the node server
@@ -85,7 +85,7 @@ void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {
     }
 }
 
-void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
+void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
     chain = blockchain;
 
     std::thread s(server.run(8080, nodeCommunicate));     // Run the server
@@ -107,7 +107,7 @@ void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std:
 }
 
 
-std::string convertBlock(Block* block) {
+std::string SyncBlockchain::convertBlock(Block* block) {
     // hashes are 32 characters in length
     std::string output;
     output = output + block->blockHash;        // 32 Chars
@@ -123,7 +123,7 @@ std::string convertBlock(Block* block) {
         output = output + block->ringsignature.publicKeys[i];   // Each key is 32 chars
 }
 
-std::string convertBlock(std::vector<Block>* block) {   // Can have for loops combined for optimization
+std::string SyncBlockchain::convertBlock(std::vector<Block>* block) {   // Can have for loops combined for optimization
     std::string output = std::to_string(block.size()) + '.';      // Append the number of blocks
     std::string temp;
     for(int i = 0; i < block.size(); i++)
@@ -138,7 +138,7 @@ std::string convertBlock(std::vector<Block>* block) {   // Can have for loops co
     return output;
 }
 
-Block convertString(std::string block) {
+Block SyncBlockchain::convertString(std::string block) {
     Block output;
 
     output.blockHash = block.substr(0, 32);
@@ -167,7 +167,7 @@ Block convertString(std::string block) {
     return output;
 }
 
-std::vector<Block> convertString(std::string block) {
+std::vector<Block> SyncBlockchain::convertString(std::string block) {
     std::vector<Block> output;
     int numOfBlocks;
     for(int i = 0; i < block.size(); i++) {
