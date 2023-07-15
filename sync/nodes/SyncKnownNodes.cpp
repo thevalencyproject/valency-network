@@ -72,3 +72,48 @@ std::vector<Position3D> SyncKnownNodes::convertString(std::string nodes) {
 
     return output;
 }
+
+std::string SyncKnownNodes::communicate(std::string input) {
+    if(input[0] == '0') {    // Receive the number of known nodes on the network
+        input.erase(0);
+
+        if(knownnodes.size() < stoi(input))    // If knownnodes are not up to date, send request
+            return '1' + std::to_string(knownnodes.size());
+        
+        return "2";
+    }
+
+    if(input[0] == '1') {   // Get the known nodes returned by the individual node and store them
+        input.erase(0);
+
+        std::vector<Position3D> temp;
+        temp = convertString(input);
+        for(int i = 0; i < temp.size(); i++)
+            knownnodes->push_back(temp[i]);
+
+        return "2";
+    }
+}
+
+std::string SyncKnownNodes::nodeCommunicate(std::string input) {
+    if(input[0] == '0')   // Return the number of known nodes
+        return '0' + std::to_string(knownnodes.size());
+
+    if(input[0] == '1') {   // Return the knownnodes after the position
+        input.erase(0);
+
+        int position = stoi(input); // the index position they want nodes from
+
+        if(position >= knownnodes.size())    // Return known nodes are already up-to-date - AKA. Quit
+            return "/quit";
+        
+        std::vector<Position3D> temp;
+        for(int i = position; i < knownnodes.size(); i++)
+            temp.push_back(knownnodes[i]);
+
+        return convertNode(&temp);
+    }
+
+    if(input[0] == '2')   // Client is quitting - send the quit message
+        return "/quit";
+}

@@ -11,8 +11,7 @@
 
 struct SyncKnownNodes {
 private:
-    std::vector<Position3D>* known;
-    int nodesRequiredForVerification;    // The number of nodes required for a known node to be added: 50% of all nodes + 1 node
+    std::vector<Position3D>* knownnodes;
 
     Server server;
     Client client;
