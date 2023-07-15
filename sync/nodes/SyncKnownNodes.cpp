@@ -54,7 +54,7 @@ std::vector<Position3D> SyncKnownNodes::convertString(std::string nodes) {
             if(nodes[i] == ':') {
                 temp.y = nodes.substr(33, j - 1 - 33);
                 
-                for(int k = j; k < node.size(); k++) {    // Get the Port
+                for(int k = j; k < nodes.size(); k++) {    // Get the Port
                     if(nodes[j] == '.') {
                         temp.z = nodes.substr(j, k - j);
                         nodes.erase(0, j);
@@ -119,7 +119,7 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
 }
 
 
-void sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes) {
+void SyncKnownNodes::sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes) {
     knownnodes = knownNodes;
 
     std::thread v(validate(activeNodes.size()));        // Validate the known nodes list
@@ -130,7 +130,7 @@ void sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNo
     }
 }
 
-void sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
+void SyncKnownNodes::sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
     knownnodes = knownNodes;
 
     std::thread v(validate(activeNodes.size()));        // Validate the known nodes list
@@ -150,7 +150,7 @@ void sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNo
     }
 }
 
-void nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes) {
+void SyncKnownNodes::nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes) {
     knownnodes = knownNodes;
 
     std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
@@ -162,7 +162,7 @@ void nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* acti
     }
 }
 
-void nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
+void SyncKnownNodes::nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
     knownnodes = knownNodes;
 
     std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
@@ -181,4 +181,12 @@ void nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* acti
             nodes.pop_back();   // Delete the destination info
         }
     }
+}
+
+void SyncKnownNodes::read(std::vector<Position3D>* knownNodes, std::string filePath) {
+    save.read(knownNodes, filePath);
+}
+
+void SyncKnownNodes::save(std::vector<Position3D>* knownNodes, std::string filePath) {
+    save.save(knownNodes, filePath);
 }
