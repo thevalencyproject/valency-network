@@ -255,7 +255,7 @@ std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
         }
 
         if(position.first == chain->numOfShards && position.second == chain->chain.back().shard.size())
-            return '2';     // Return blockchain already up to date
+            return "/quit";     // Return blockchain already up to date - AKA. Quit
         
         // Fill the block vector
         std::vector<Block> requestedBlocks;
