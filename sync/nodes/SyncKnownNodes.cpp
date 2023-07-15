@@ -117,3 +117,68 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
     if(input[0] == '2')   // Client is quitting - send the quit message
         return "/quit";
 }
+
+
+void sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes) {
+    knownnodes = knownNodes;
+
+    std::thread v(validate(activeNodes.size()));        // Validate the known nodes list
+
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++)     // Run the client
+            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of known nodes on the network
+    }
+}
+
+void sync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
+    knownnodes = knownNodes;
+
+    std::thread v(validate(activeNodes.size()));        // Validate the known nodes list
+
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++) {   // Run the onion-client
+            NodeInfo n;                                 // Add the destination to the end of the nodes vector
+            n.address = activeNodes[i].x;
+            n.location.address = activeNodes[i].y;
+            n.location.port = activeNodes[i].z
+            nodes.push_back(n);
+
+            std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of known nodes on the network
+
+            nodes.pop_back();   // Delete the destination info
+        }
+    }
+}
+
+void nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes) {
+    knownnodes = knownNodes;
+
+    std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
+    std::thread v(validate(activeNodes.size()));          // Validate the known nodes list
+
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++)       // Run the client
+            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of known nodes on the network
+    }
+}
+
+void nodeSync(std::vector<Position3D>* knownNodes, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
+    knownnodes = knownNodes;
+
+    std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
+    std::thread v(validate(activeNodes.size()));          // Validate the known nodes list
+
+    while(1) {
+        for(int i = 0; i < activeNodes.size(); i++) {     // Run the onion-client
+            NodeInfo n;                                   // Add the destination to the end of the nodes vector
+            n.address = activeNodes[i].x;
+            n.location.address = activeNodes[i].y;
+            n.location.port = activeNodes[i].z
+            nodes.push_back(n);
+
+            std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of known nodes on the network
+
+            nodes.pop_back();   // Delete the destination info
+        }
+    }
+}
