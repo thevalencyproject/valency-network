@@ -39,6 +39,9 @@ void SyncBlockchain::validate(int numOfActiveNodes) {
             chain->addBlock(unverifiedBlocks[index][i]);
 
         unVerifiedBlocks.clear();   // Clear the vector
+        counter.clear();
+        highest = 0;
+        index = 0;
     }
 }
 
