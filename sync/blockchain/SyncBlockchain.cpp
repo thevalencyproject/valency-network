@@ -7,26 +7,27 @@ void SyncBlockchain::validate(int numOfActiveNodes) {
             std::this_thread::sleep_for(std::chrono::seconds(5));
 
         // Verify
-        std::vector<std::pair<int, int>> counter;    // first int holds index of unique block vector, whilst the int counts how many instances of it occurs
+        std::vector<std::pair<int, unsigned long>> counter;    // first int holds index of unique block vector, whilst the int counts how many instances of it occurs
         for(int i = 0; i < unVerifiedBlocks.size(); i++) {
             // If the block vector is unseen before, add it to the vector of pairs... if it is seen, increment the instance counter
             bool seen = false;
             for(int j = 0; j < counter.size(); j++) {   // Check if it already exists in the counter
-                if(unverifiedBlocks[i] == unverifiedBlocks[counter[j].first]) {
-                    counter[j].second++;    // Increment the instance counter
+                if(unverifiedBlocks[i].first == unverifiedBlocks[counter[j].first].first) {
+                    counter[j].second = counter[j].second + unverifiedBlocks[i].second;    // Increment the instance counter by the bias
                     seen = true;
                     break;
                 }
             }
             if(seen == false) {     // Not seen, therefore add to counter vector
-                std::pair<int, int> temp;
+                std::pair<int, unsigned long> temp;
                 temp.first = i;
-                temp.second = 1;
+                temp.second = unverifiedBlocks[i].second;
+                counter.push_back(temp);
             }
         }
 
         // Sort the counter vector by the highest number
-        int highest, index;
+        unsigned long highest, index;
         for(int i = 0; i < counter.size(); i++) {
             if(counter[i].second > highest) {
                 highest = counter[i].second;
@@ -45,7 +46,7 @@ void SyncBlockchain::validate(int numOfActiveNodes) {
     }
 }
 
-void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {   // Non Onion-Routing
+void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes) {   // Non Onion-Routing
     chain = blockchain;
 
     std::thread v(validate(activeNodes.size()));        // Validate the block vectors
@@ -56,7 +57,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activ
     }
 }
 
-void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {  // Onion Routing
+void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes, std::vector<NodeInfo> nodes) {  // Onion Routing
     chain = blockchain;
 
     std::thread v(validate(activeNodes.size()));        // Validate the block vectors
@@ -76,7 +77,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position3D>* activ
     }
 }
 
-void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes) {
+void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* activeNodes) {
     chain = blockchain;
     
     std::thread s(server.run(8080, nodeCommunicate));     // Run the node server
@@ -88,7 +89,7 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position3D>* a
     }
 }
 
-void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes) {
+void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* activeNodes, std::vector<NodeInfo> nodes) {
     chain = blockchain;
 
     std::thread s(server.run(8080, nodeCommunicate));     // Run the server

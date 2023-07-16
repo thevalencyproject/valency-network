@@ -13,8 +13,8 @@
 struct SyncBlockchain {
 private:
     Blockchain* chain;
-    std::vector<std::vector<Block>> unverifiedBlocks;    // The blocks that some nodes have sent, but others havent (not 100% verified yet)
-    void validate(int numOfActiveNodes);                 // Validates the incoming blocks from the nodes
+    std::vector<std::pair<std::vector<Block>, unsigned long>> unverifiedBlocks;    // The blocks that some nodes have sent, but others havent (not 100% verified yet) - the unsigned long is the node bias
+    void validate(int numOfActiveNodes);                                           // Validates the incoming blocks from the nodes
 
     Server server;
     Client client;
@@ -35,10 +35,10 @@ public:
     // Runs in its own core - constantly syncs the blockchain: Ensure the activeNodes vector is also being synced by SyncActiveNodes
     //   -> Designed to take pointers to constantly changing vectors (changed in other threads)
     //   -> sync() is for wallets + misc programs and nodeSync() is for nodes
-    void sync(Blockchain* blockchain, std::vector<Position3D>* activeNodes);                                    // Non Onion-Routing
-    void sync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes);       // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
-    void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes);                                // Non Onion-Routing
-    void nodeSync(Blockchain* blockchain, std::vector<Position3D>* activeNodes, std::vector<NodeInfo> nodes);   // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
+    void sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes);                                    // Non Onion-Routing
+    void sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes, std::vector<NodeInfo> nodes);       // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
+    void nodeSync(Blockchain* blockchain, std::vector<Position4D>* activeNodes);                                // Non Onion-Routing
+    void nodeSync(Blockchain* blockchain, std::vector<Position4D>* activeNodes, std::vector<NodeInfo> nodes);   // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
 
     void read(Blockchain* blockchain, std::string filePath);    // Also has a file reading/writing functionality through the local-save framework (in valency-network)
     void save(Blockchain* blockchain, std::string filePath);    //   -> filePath should contain the file name / SaveBlockchain save;
