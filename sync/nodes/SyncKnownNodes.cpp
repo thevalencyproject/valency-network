@@ -1,6 +1,50 @@
 #include "SyncKnownNodes.h"
 
 
+void SyncKnownNodes::validate(int numOfActiveNodes) {
+    while(1) {
+        while(unverifiedNodes.size() < numOfActiveNodes - 2)        // Wait until unverifiedNodes fills up
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+
+        // Verify
+        std::vector<std::pair<int, int>> counter;    // first int holds index of unique node vector, whilst the int counts how many instances of it occurs
+        for(int i = 0; i < unverifiedNodes.size(); i++) {
+            // If the node vector is unseen before, add it to the vector... if it is seen, invrement the instance counter
+            bool seen = false;
+            for(int j = 0; j < counter.size(); j++) {   // Check if it already exists in the counter
+                if(unverifiedNodes[i] == unverifiedNodes[counter[j].first]) {
+                    counter[j].second++;    // Increment the instance counter
+                    seen = true;
+                    break;
+                }
+            }
+            if(seen == false) {     // Not seen, therefore add to counter vector
+                std::pair<int, int> temp;
+                temp.first = i;
+                temp.second = 1;
+            }
+        }
+
+        // Sort the counter vector to find the highest number
+        int highest, index;
+        for(int i = 0; i < counter.size(); i++) {
+            if(counter[i].second > highest) {
+                highest = counter[i].second;
+                index = counter[i].first;
+            }
+        }
+
+        // Add the knownnodes temp vector with the highest instance counter in the counter vector to the end of the known nodes vector
+        for(int i = 0; i < unverifiedNodes[index].size(); i++)
+            knownnodes->push_back(unverifiedNodes[index][i]);
+        
+        unverifiedNodes.clear();    // Clear the vector
+        counter.clear();
+        highest = 0;
+        index = 0;
+    }
+}
+
 std::string SyncKnownNodes::convertNode(Position3D* node) {
 // ':' between IP address and port + 32 character address at front
 

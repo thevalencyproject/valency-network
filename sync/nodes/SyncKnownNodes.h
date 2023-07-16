@@ -12,6 +12,8 @@
 struct SyncKnownNodes {
 private:
     std::vector<Position3D>* knownnodes;
+    std::vector<std::vector<Position3D>> unverifiedNodes;
+    void validate(int numOfActiveNodes);
 
     Server server;
     Client client;
