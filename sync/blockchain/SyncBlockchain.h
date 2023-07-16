@@ -13,6 +13,8 @@
 struct SyncBlockchain {
 private:
     Blockchain* chain;
+    
+    unsigned long bias = 0;
     std::vector<std::pair<std::vector<Block>, unsigned long>> unverifiedBlocks;    // The blocks that some nodes have sent, but others havent (not 100% verified yet) - the unsigned long is the node bias
     void validate(int numOfActiveNodes);                                           // Validates the incoming blocks from the nodes
 

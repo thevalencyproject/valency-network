@@ -52,8 +52,14 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activ
     std::thread v(validate(activeNodes.size()));        // Validate the block vectors
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++)     // Run the client
+        for(int i = 0; i < activeNodes.size(); i++) {     // Run the client
             std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of shards + # of blocks in latest shard
+            
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
+        }
     }
 }
 
@@ -71,6 +77,11 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activ
             nodes.push_back(n);
 
             std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of shards + # of blocks in latest shard
+        
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
 
             nodes.pop_back();   // Delete the destination info
         }
@@ -84,8 +95,14 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* a
     std::thread v(validate(activeNodes.size()));          // Validate the block vectors
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++)     // Run the client
+        for(int i = 0; i < activeNodes.size(); i++) {    // Run the client
             std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of shards + # of blocks in latest shard
+        
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
+        }
     }
 }
 
@@ -104,6 +121,11 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* a
             nodes.push_back(n);
 
             std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of shards + # of blocks in latest shard
+
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
 
             nodes.pop_back();   // Delete the destination info
         }
@@ -206,6 +228,9 @@ std::vector<Block> SyncBlockchain::convertString(std::string block) {
 }
 
 std::string SyncBlockchain::communicate(std::string input) {    // Wallet
+    unsigned long nodebias = bias;
+    bias = 0;
+
     // Only send receive data (request is sent out in initial message)
     //  -> Initial Message should be number of shards + blocks request
 
@@ -237,7 +262,13 @@ std::string SyncBlockchain::communicate(std::string input) {    // Wallet
 
     if(input[0] == '1') {                                   // Get the blocks returned by the individual node and store them
         input.erase(0);                                     // Erase the function index identifier
-        unverifiedBlocks.push_back(convertString(input));   // Add the unverified blocks to the vector
+
+        // Add the unverified blocks to the vector (+ the unique node bias)
+        std::pair<std::vector<Block>, unsigned long> temp;
+        temp.first.push_back(convertString(input));
+        temp.second = nodebias;
+        unverifiedBlocks.push_back(temp);
+
         return '2';                                         // Return the quit code                                   
     }
 }
