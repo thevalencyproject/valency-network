@@ -294,6 +294,17 @@ std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
         if(position.first == chain->numOfShards && position.second == chain->chain.back().shard.size())
             return "/quit";     // Return blockchain already up to date - AKA. Quit
         
+        // If the client is requesting the entire blockchain
+        if(position.first + position.second == 0) {
+            std::vector<Block> allBlocks;
+
+            for(int i = 0; i < chain->numOfShards; i++)   // Shards
+                for(int j = 0; j < chain->length; j++)    // Blocks
+                    allBlocks.push_back(chain->chain[i].shard[j]);
+
+            return '1' + convertBlock(&allBlocks);
+        }
+
         // Fill the block vector
         std::vector<Block> requestedBlocks;
 
