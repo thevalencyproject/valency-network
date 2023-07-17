@@ -8,7 +8,7 @@
 #include "valency-core/networking/client/Client.h"
 #include "valency-core/networking/server/Server.h"
 #include "valency-core/networking/onion-routing/Onion.h"
-
+#include "valency-core/algorithms/lzma-compression/LZMA-Compression.h"
 
 struct SyncBlockchain {
 private:
@@ -22,6 +22,7 @@ private:
     Client client;
     Onion onion(2);
     SaveBlockchain save;
+    LZMACompression lzma;
 
     std::string convertBlock(Block* block);     // Converts a block into string form - used for network communication
     std::string convertBlock(std::vector<Block>* blocks);   // Converts a vector of blocks into string form - used for network communication

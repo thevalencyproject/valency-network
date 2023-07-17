@@ -271,6 +271,20 @@ std::string SyncBlockchain::communicate(std::string input) {    // Wallet
 
         return '2';                                         // Return the quit code                                   
     }
+
+    if(input[0] == '2') {   // Get the entire blockchain returned by the individual node, decompress, and store it
+        input.erase(0);     // Erase the function index identifier
+
+        input = lzma.decompress(&input);    // Decompress the input
+
+        // Add the unverified blocks to the vector (+ the unique node bias)
+        std::pair<std::vector<Block>, unsigned long> temp;
+        temp.first.push_back(convertString(input));
+        temp.second = nodebias;
+        unverifiedBlocks.push_back(temp);
+
+        return '2';                                         // Return the quit code
+    }
 }
 std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
     // Only give out details - dont send requests
@@ -302,7 +316,9 @@ std::string SyncBlockchain::nodeCommunicate(std::string input) {    // Node
                 for(int j = 0; j < chain->length; j++)    // Blocks
                     allBlocks.push_back(chain->chain[i].shard[j]);
 
-            return '1' + convertBlock(&allBlocks);
+            // Send the function index identifier + the compressed blockchain
+            std::string output = convertBlock(&allBlocks);
+            return '2' + lzma.compress(&output);
         }
 
         // Fill the block vector
