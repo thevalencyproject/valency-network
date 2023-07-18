@@ -7,26 +7,27 @@ void SyncKnownNodes::validate(int numOfActiveNodes) {
             std::this_thread::sleep_for(std::chrono::seconds(5));
 
         // Verify
-        std::vector<std::pair<int, int>> counter;    // first int holds index of unique node vector, whilst the int counts how many instances of it occurs
+        std::vector<std::pair<int, unsigned long>> counter;    // first int holds index of unique node vector, whilst the int counts how many instances of it occurs
         for(int i = 0; i < unverifiedNodes.size(); i++) {
             // If the node vector is unseen before, add it to the vector... if it is seen, invrement the instance counter
             bool seen = false;
             for(int j = 0; j < counter.size(); j++) {   // Check if it already exists in the counter
-                if(unverifiedNodes[i] == unverifiedNodes[counter[j].first]) {
-                    counter[j].second++;    // Increment the instance counter
+                if(unverifiedNodes[i].first == unverifiedNodes[counter[j].first].first) {
+                    counter[j].second = counter[j].second + unverifiedNodes[i].second;    // Increment the instance counter (by the node bias)
                     seen = true;
                     break;
                 }
             }
             if(seen == false) {     // Not seen, therefore add to counter vector
-                std::pair<int, int> temp;
+                std::pair<int, unsigned long> temp;
                 temp.first = i;
-                temp.second = 1;
+                temp.second = unverifiedNodes[i].second;
+                counter.push_back(temp);
             }
         }
 
         // Sort the counter vector to find the highest number
-        int highest, index;
+        unsigned long highest, index;
         for(int i = 0; i < counter.size(); i++) {
             if(counter[i].second > highest) {
                 highest = counter[i].second;
