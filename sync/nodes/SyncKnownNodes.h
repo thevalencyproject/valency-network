@@ -9,7 +9,7 @@
 #include "valency-core/networking/onion-routing/Onion.h"
 
 
-struct SyncKnownNodes {
+class SyncKnownNodes {
 private:
     /* x: Public Address
        y: IP Address
