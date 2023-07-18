@@ -17,9 +17,10 @@ private:
        i: Bias */
     std::vector<Position4D>* knownnodes;
 
+    unsigned int numOfActiveNodes;                                                      // The number of nodes that are active on the network
     unsigned long bias = 0;                                                             // Node Bias - replicating mutex without mutex
     std::vector<std::pair<std::vector<Position4D>, unsigned long>> unverifiedNodes;     // The knownnodes that some nodes have sent, byt others havent - unsigned long is the node bias
-    void validate(int numOfActiveNodes);                                                // Validates the incoming knownnodes
+    void validate();                                                                    // Validates the incoming knownnodes
 
     Server server;
     Client client;
@@ -30,6 +31,12 @@ private:
     std::string convertNode(std::vector<Position4D>* nodes);    // Converts a vector of nodes into string form - used for network communication
     Position4D convertString(std::string node);                 // Converts string to a node (string should come from convertNode() function)
     std::vector<Position4D> convertString(std::string nodes);   // Converts string to a vector of nodes (string should come from convertNode() function)
+
+    // Interfaces with the client networking framework to connect to a node and increment numOfActiveNodes
+    template<typename T>
+    void connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage);
+    template<typename T>
+    void connectToNodeOnion(std::vector<NodeInfo> nodes, std::string (T::*communicate)(std::string), std::string initialMessage);
 
     std::string communicate(std::string input);         // Passed into the networking frameworks (client, server, and onion can use same function)
     std::string nodeCommunicate(std::string input);     // Node Only: Passed into the networking frameworks (client, server, and onion can use same function)
