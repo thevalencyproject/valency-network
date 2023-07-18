@@ -51,7 +51,7 @@ void SyncKnownNodes::validate() {
 std::string SyncKnownNodes::convertNode(Position4D* node) {
 // ':' between IP address and port + 32 character address at front
 
-    return node.x + node.y + '.' + std::to_string(node.z);
+    return node.x + node.y + '.' + std::to_string(node.z) + '.' + std::to_string(node.i);
 }
 
 std::string SyncKnownNodes::convertNode(std::vector<Position4D>* nodes) {
@@ -59,7 +59,7 @@ std::string SyncKnownNodes::convertNode(std::vector<Position4D>* nodes) {
 
 
     for(int i = 0; i < nodes.size(); i++)
-        output = output + node.x + node.y + ':' + std::to_string(node.z) + '.';     // '.' between nodes
+        output = output + node.x + node.y + ':' + std::to_string(node.z) + '.' + std::to_string(node.i) + '.';     // '.' between nodes
 
     output.pop_back();  // Remove last '.'
     return output;
@@ -72,7 +72,16 @@ Position4D SyncKnownNodes::convertString(std::string node) {
     for(int i = 33; i < node.size(); i++) {
         if(node[i] == ':') {
             output.y = node.substr(33, i - 1 - 33);
-            output.z = node.substr(i - 1, node.size() - i - 1);
+
+            for(int j = i; j < node.size(); j++) {
+                if(node[j] == '.') {
+                    output.z = node.substr(i, j - i);
+                    output.i = node.substr(j, node.size() - j);
+
+                    break;
+                }
+            }
+
             break;
         }
     }
@@ -80,8 +89,10 @@ Position4D SyncKnownNodes::convertString(std::string node) {
     return output;
 }
 
-std::vector<Position4D> SyncKnownNodes::convertString(std::string nodes) {template<typename T>
-    void connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage);
+std::vector<Position4D> SyncKnownNodes::convertString(std::string nodes) {
+    std::vector<Position4D> output;
+
+    // Get the number of nodes
     int size;
     for(int i = 0; i < nodes.size(); i++) {
         if(nodes[i] == '.') {
@@ -96,13 +107,21 @@ std::vector<Position4D> SyncKnownNodes::convertString(std::string nodes) {templa
 
         temp.x = nodes.substr(0, 32);   // Get the public node address
         for(int j = 33; j < nodes.size(); j++) {    // Get the IP address
-            if(nodes[i] == ':') {
+            if(nodes[j] == ':') {
                 temp.y = nodes.substr(33, j - 1 - 33);
                 
                 for(int k = j; k < nodes.size(); k++) {    // Get the Port
-                    if(nodes[j] == '.') {
+                    if(nodes[k] == '.') {
                         temp.z = nodes.substr(j, k - j);
-                        nodes.erase(0, j);
+
+                        for(int x = k; x < nodes.size(); x++) {
+                            if(nodes[x] == '.') {
+                                temp.i = nodes.substr(k, x - k)
+                                nodes.erase(0, x);
+
+                                break;
+                            }
+                        }
 
                         break;
                     }
