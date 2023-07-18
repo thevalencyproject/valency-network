@@ -16,6 +16,8 @@ private:
        z: Port
        i: Bias */
     std::vector<Position4D>* knownnodes;
+
+    unsigned long bias = 0;                                                             // Node Bias - replicating mutex without mutex
     std::vector<std::pair<std::vector<Position4D>, unsigned long>> unverifiedNodes;     // The knownnodes that some nodes have sent, byt others havent - unsigned long is the node bias
     void validate(int numOfActiveNodes);                                                // Validates the incoming knownnodes
 

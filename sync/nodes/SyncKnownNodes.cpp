@@ -119,6 +119,9 @@ std::vector<Position3D> SyncKnownNodes::convertString(std::string nodes) {
 }
 
 std::string SyncKnownNodes::communicate(std::string input) {
+    unsigned long nodebias = bias;
+    bias = 0;
+
     if(input[0] == '0') {    // Receive the number of known nodes on the network
         input.erase(0);
 
@@ -131,11 +134,12 @@ std::string SyncKnownNodes::communicate(std::string input) {
     if(input[0] == '1') {   // Get the known nodes returned by the individual node and store them
         input.erase(0);
 
-        std::vector<Position3D> temp;
-        temp = convertString(input);
-        for(int i = 0; i < temp.size(); i++)
-            knownnodes->push_back(temp[i]);
-
+        // Add the unverified known nodes to the vector (+ the unique node bias)
+        std::pair<std::vector<Position4D>, unsigned long> temp;
+        temp.first.push_back(convertString(input));
+        temp.second = nodebias;
+        unverifiedNodes.push_back(temp);
+        
         return "2";
     }
 }
@@ -170,8 +174,14 @@ void SyncKnownNodes::sync(std::vector<Position3D>* knownNodes, std::vector<Posit
     std::thread v(validate(activeNodes.size()));        // Validate the known nodes list
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++)     // Run the client
+        for(int i = 0; i < activeNodes.size(); i++) {     // Run the client
             std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of known nodes on the network
+        
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
+        }
     }
 }
 
@@ -190,6 +200,11 @@ void SyncKnownNodes::sync(std::vector<Position3D>* knownNodes, std::vector<Posit
 
             std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of known nodes on the network
 
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
+
             nodes.pop_back();   // Delete the destination info
         }
     }
@@ -202,8 +217,14 @@ void SyncKnownNodes::nodeSync(std::vector<Position3D>* knownNodes, std::vector<P
     std::thread v(validate(activeNodes.size()));          // Validate the known nodes list
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++)       // Run the client
+        for(int i = 0; i < activeNodes.size(); i++) {      // Run the client
             std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of known nodes on the network
+        
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
+        }
     }
 }
 
@@ -222,6 +243,11 @@ void SyncKnownNodes::nodeSync(std::vector<Position3D>* knownNodes, std::vector<P
             nodes.push_back(n);
 
             std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of known nodes on the network
+
+            // Pass through the node bias
+            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
 
             nodes.pop_back();   // Delete the destination info
         }
