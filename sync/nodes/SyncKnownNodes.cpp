@@ -159,13 +159,35 @@ std::string SyncKnownNodes::communicate(std::string input) {
         if(knownnodes.size() < stoi(input))    // If knownnodes are not up to date, send request
             return '1' + std::to_string(knownnodes.size());
         
-        return "2";
+        return "2";     // Quit Message
     }
 
     if(input[0] == '1') {   // Get the known nodes returned by the individual node and store them
         input.erase(0);
 
-        // Add the unverified known nodes to the vector (Position3D
+        // Add the unverified known nodes to the vector (+ the unique node bias)
+        std::pair<std::vector<Position4D>, unsigned long> temp;
+        temp.first.push_back(convertString(input));
+        temp.second = nodebias;
+        unverifiedNodes.push_back(temp);
+
+        return "2";     // Quit Message
+    }
+
+    if(input[0] == '2') {   // Get the entirity of the known nodes data returned by the individual node and store it
+        input.erase(0);     // Erase the function index identifier
+
+        input = lzma.decompress(&input);    // Decompress the input
+
+        // Add the unverified known nodes to the vector (+ the unique node bias)
+        std::pair<std::vector<Position4D>, unsigned long> temp;
+        temp.first.push_back(convertString(input));
+        temp.second = nodebias;
+        unverifiedNodes.push_back(temp);
+
+        return "2";     // Quit Message
+    }
+}
 
 std::string SyncKnownNodes::nodeCommunicate(std::string input) {
     if(input[0] == '0')   // Return the number of known nodes
@@ -174,11 +196,24 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
     if(input[0] == '1') {   // Return the knownnodes after the position
         input.erase(0);
 
-        int position = stoi(input); // the index position they want nodes from
+        int position = stoi(input);    // The index position they want nodes from
 
         if(position >= knownnodes.size())    // Return known nodes are already up-to-date - AKA. Quit
             return "/quit";
         
+        // If the client is requesting all the known nodes (minus the default starting ones)
+        if(position <= 5) {
+            std::vector<Position4D> allNodes;
+
+            for(int i = 0; i < knownNodes.size(); i++)
+                allNodes.push_back(knownNodes[i]);
+        
+            // Send the function index identifier + the compressed known nodes
+            std::string output = convertNode(allNodes);
+            return '2' + lzma.compress(&output);
+        }
+
+        // Fill the node vector to the requested size
         std::vector<Position4D> temp;
         for(int i = position; i < knownnodes.size(); i++)
             temp.push_back(knownnodes[i]);

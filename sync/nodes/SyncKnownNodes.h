@@ -7,6 +7,7 @@
 #include "valency-core/networking/client/Client.h"
 #include "valency-core/networking/server/Server.h"
 #include "valency-core/networking/onion-routing/Onion.h"
+#include "valency-core/algorithms/lzma-compression/LZMA-Compression.h"
 
 
 class SyncKnownNodes {
@@ -17,15 +18,17 @@ private:
        i: Bias */
     std::vector<Position4D>* knownnodes;
 
+    int numberOfDefaultNodes = 5;                                                       // The number of nodes that are included in the program by default
     unsigned int numOfActiveNodes;                                                      // The number of nodes that are active on the network
     unsigned long bias = 0;                                                             // Node Bias - replicating mutex without mutex
-    std::vector<std::pair<std::vector<Position4D>, unsigned long>> unverifiedNodes;     // The knownnodes that some nodes have sent, byt others havent - unsigned long is the node bias
+    std::vector<std::pair<std::vector<Position4D>, unsigned long>> unverifiedNodes;     // The knownnodes that some nodes have sent, but others havent - unsigned long is the node bias
     void validate();                                                                    // Validates the incoming knownnodes
 
     Server server;
     Client client;
     Onion onion(2);
     SaveNodes save;
+    LZMACompression lzma;
 
     std::string convertNode(Position4D* node);                  // Converts a node into string form - used for network communication
     std::string convertNode(std::vector<Position4D>* nodes);    // Converts a vector of nodes into string form - used for network communication
