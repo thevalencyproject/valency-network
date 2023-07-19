@@ -1,10 +1,12 @@
 #include "SyncBlockchain.h"
 
 
-void SyncBlockchain::validate(int numOfActiveNodes) {
+void SyncBlockchain::validate() {
     while(1) {
         while(unVerifiedBlocks.size() < numOfActiveNodes - 2)      // Wait for until unVerifiedBlocks fills up
             std::this_thread::sleep_for(std::chrono::seconds(5));
+
+        numOfActiveNodes = 0;   // Reset the active nodes counter
 
         // Verify
         std::vector<std::pair<int, unsigned long>> counter;    // first int holds index of unique block vector, whilst the int counts how many instances of it occurs
@@ -44,6 +46,18 @@ void SyncBlockchain::validate(int numOfActiveNodes) {
         highest = 0;
         index = 0;
     }
+}
+
+template<typename T>
+void SyncBlockchain::connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage) {
+    if(client.connectToServer(ip, port, communicate, initialMessage) == true)
+        numOfActiveNodes++;
+}
+
+template<typename T>
+void SyncBlockchain::connectToNodeOnion(std::vector<NodeInfo> nodes, std::string (T::*communicate)(std::string), std::string initialMessage) {
+    if(onion.connectToServer(nodes, initialMessage, communicate) == true)
+        numOfActiveNodes++;
 }
 
 void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes) {   // Non Onion-Routing

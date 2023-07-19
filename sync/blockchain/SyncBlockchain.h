@@ -10,13 +10,15 @@
 #include "valency-core/networking/onion-routing/Onion.h"
 #include "valency-core/algorithms/lzma-compression/LZMA-Compression.h"
 
-struct SyncBlockchain {
+
+class SyncBlockchain {
 private:
     Blockchain* chain;
     
-    unsigned long bias = 0;
+    unsigned int numOfActiveNodes;                                                 // The number of nodes that are active on the network
+    unsigned long bias = 0;                                                        // Node Bias - replicating mutex without mutex
     std::vector<std::pair<std::vector<Block>, unsigned long>> unverifiedBlocks;    // The blocks that some nodes have sent, but others havent (not 100% verified yet) - the unsigned long is the node bias
-    void validate(int numOfActiveNodes);                                           // Validates the incoming blocks from the nodes
+    void validate();                                                               // Validates the incoming blocks from the nodes
 
     Server server;
     Client client;
@@ -28,6 +30,12 @@ private:
     std::string convertBlock(std::vector<Block>* blocks);   // Converts a vector of blocks into string form - used for network communication
     Block convertString(std::string block);                 // Converts string to a block (string should come from convertBlock() function)
     std::vector<Block> convertString(std::string blocks);   // Converts string to a vector of blocks (string should come from convertBlock() function)
+
+    // Interfaces with the client networking framework to connect to a node and increment numOfActiveNodes
+    template<typename T>
+    void connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage);
+    template<typename T>
+    void connectToNodeOnion(std::vector<NodeInfo> nodes, std::string (T::*communicate)(std::string), std::string initialMessage);
 
     std::string communicate(std::string input);         // Passed into the networking frameworks (client, server, and onion can use same function)
     std::string nodeCommunicate(std::string input);     // Node Only: Passed into the networking frameworks (client, server, and onion can use same function)
