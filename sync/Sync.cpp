@@ -12,12 +12,12 @@ Sync::Sync(bool node, std::string blockchainPath, std::string knownNodesPath) {
     // Continuously Sync (these open in new threads)
     switch(node) {
     case 0:
-        syncKnownNodes.sync(knownNodes, activeNodes);
-        syncBlockchain.sync(blockchain, activeNodes);
+        syncKnownNodes.sync(knownNodes);
+        syncBlockchain.sync(blockchain, knownNodes);
         break;
     case 1:
-        syncKnownNodes.nodeSync(knownNodes, activeNodes);
-        syncBlockchain.nodeSync(blockchain, activeNodes);
+        syncKnownNodes.nodeSync(knownNodes);
+        syncBlockchain.nodeSync(blockchain, knownNodes);
         break;
     }
     

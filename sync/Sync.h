@@ -8,7 +8,6 @@
 struct Sync {
     // The objects that are synced and their file paths
     Blockchain blockchain;
-    std::vector<Position4D> activeNodes;
     std::vector<Position4D> knownNodes;
     std::string blockchainFilepath;
     std::string knownNodesFilepath;
