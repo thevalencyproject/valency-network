@@ -229,7 +229,7 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
 void SyncKnownNodes::sync(std::vector<Position4D>* knownNodes) {
     knownnodes = knownNodes;
 
-    std::thread v(validate(knownnodes.size()));        // Validate the known nodes list
+    std::thread v(validate());        // Validate the known nodes list
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {     // Run the client
@@ -246,7 +246,7 @@ void SyncKnownNodes::sync(std::vector<Position4D>* knownNodes) {
 void SyncKnownNodes::sync(std::vector<Position4D>* knownNodes, std::vector<NodeInfo> nodes) {
     knownnodes = knownNodes;
 
-    std::thread v(validate(knownnodes.size()));        // Validate the known nodes list
+    std::thread v(validate());        // Validate the known nodes list
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {   // Run the onion-client
@@ -272,7 +272,7 @@ void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes) {
     knownnodes = knownNodes;
 
     std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
-    std::thread v(validate(knownnodes.size()));          // Validate the known nodes list
+    std::thread v(validate());                            // Validate the known nodes list
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {      // Run the client
@@ -290,7 +290,7 @@ void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes, std::vector<N
     knownnodes = knownNodes;
 
     std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
-    std::thread v(validate(knownnodes.size()));          // Validate the known nodes list
+    std::thread v(validate());                            // Validate the known nodes list
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {     // Run the onion-client
@@ -303,7 +303,7 @@ void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes, std::vector<N
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of known nodes on the network
 
             // Pass through the node bias
-            bias = knownnodes[i].i;    // Set the bias (for the communicate() functions)
+            bias = knownnodes[i].i;     // Set the bias (for the communicate() functions)
             while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
 

@@ -63,12 +63,12 @@ void SyncBlockchain::connectToNodeOnion(std::vector<NodeInfo> nodes, std::string
 void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes) {   // Non Onion-Routing
     chain = blockchain;
 
-    std::thread v(validate(activeNodes.size()));        // Validate the block vectors
+    std::thread v(validate());        // Validate the block vectors
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++) {     // Run the client
-            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of shards + # of blocks in latest shard
-            
+        for(int i = 0; i < activeNodes.size(); i++) {     // Run the client   
+            std::thread c(connectToNode(activeNodes[i].y, activeNodes[i].z, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
+
             // Pass through the node bias
             bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
             while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
@@ -80,7 +80,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activ
 void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes, std::vector<NodeInfo> nodes) {  // Onion Routing
     chain = blockchain;
 
-    std::thread v(validate(activeNodes.size()));        // Validate the block vectors
+    std::thread v(validate());        // Validate the block vectors
 
     while(1) {
         for(int i = 0; i < activeNodes.size(); i++) {   // Run the onion-client
@@ -90,8 +90,8 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activ
             n.location.port = activeNodes[i].z
             nodes.push_back(n);
 
-            std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of shards + # of blocks in latest shard
-        
+            std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
+
             // Pass through the node bias
             bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
             while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
@@ -106,11 +106,11 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* a
     chain = blockchain;
     
     std::thread s(server.run(8080, nodeCommunicate));     // Run the node server
-    std::thread v(validate(activeNodes.size()));          // Validate the block vectors
+    std::thread v(validate());                            // Validate the block vectors
 
     while(1) {
         for(int i = 0; i < activeNodes.size(); i++) {    // Run the client
-            std::thread c(client.connectToServer(activeNodes[i].y, activeNodes[i].z, communicate, '0'));    // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(connectToNode(activeNodes[i].y, activeNodes[i].z, communicate, '0');    // Initially request the # of shards + # of blocks in latest shard
         
             // Pass through the node bias
             bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
@@ -124,7 +124,7 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* a
     chain = blockchain;
 
     std::thread s(server.run(8080, nodeCommunicate));     // Run the server
-    std::thread v(validate(activeNodes.size()));          // Validate the block vectors
+    std::thread v(validate());                            // Validate the block vectors
 
     while(1) {
         for(int i = 0; i < activeNodes.size(); i++) {    // Run the onion-client
@@ -134,7 +134,7 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* a
             n.location.port = activeNodes[i].z
             nodes.push_back(n);
 
-            std::thread c(onion.onionRouting(nodes, '0', communicate));     // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
 
             // Pass through the node bias
             bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
