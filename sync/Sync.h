@@ -18,7 +18,8 @@ struct Sync {
 
     // Starts syncing the blockchain, activeNodes, and knownNodes on construction
     //  -> Input whether it is running as a node, or as a wallet (or anything else for that matter)
-    Sync(bool node, std::string blockchainPath, std::string knownNodesPath);
+    Sync(bool node, std::string blockchainPath, std::string knownNodesPath);                                // Non Onion-Routing
+    Sync(bool node, std::string blockchainPath, std::string knownNodesPath, std::vector<NodeInfo> nodes);   // Onion-Routing - nodes should include the selected onion routing nodes
     ~Sync();    // Saves the objects to their respective filepaths
 
     // Passthrough Functions for reading and writing (funnel down to local-save framework)
