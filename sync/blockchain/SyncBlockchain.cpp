@@ -60,40 +60,40 @@ void SyncBlockchain::connectToNodeOnion(std::vector<NodeInfo> nodes, std::string
         numOfActiveNodes++;
 }
 
-void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes) {   // Non Onion-Routing
+void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* knownNodes) {   // Non Onion-Routing
     chain = blockchain;
 
     std::thread v(validate());        // Validate the block vectors
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++) {     // Run the client   
-            std::thread c(connectToNode(activeNodes[i].y, activeNodes[i].z, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
+        for(int i = 0; i < knownNodes.size(); i++) {     // Run the client   
+            std::thread c(connectToNode(knownNodes[i].y, knownNodes[i].z, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
 
             // Pass through the node bias
-            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            bias = knownNodes[i].i;    // Set the bias (for the communicate() functions)
             while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
         }
     }
 }
 
-void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activeNodes, std::vector<NodeInfo> nodes) {  // Onion Routing
+void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* knownNodes, std::vector<NodeInfo> nodes) {  // Onion Routing
     chain = blockchain;
 
     std::thread v(validate());        // Validate the block vectors
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++) {   // Run the onion-client
+        for(int i = 0; i < knownNodes.size(); i++) {   // Run the onion-client
             NodeInfo n;                                 // Add the destination to the end of the nodes vector
-            n.address = activeNodes[i].x;
-            n.location.address = activeNodes[i].y;
-            n.location.port = activeNodes[i].z
+            n.address = knownNodes[i].x;
+            n.location.address = knownNodes[i].y;
+            n.location.port = knownNodes[i].z
             nodes.push_back(n);
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
 
             // Pass through the node bias
-            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            bias = knownNodes[i].i;    // Set the bias (for the communicate() functions)
             while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
 
@@ -102,42 +102,42 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* activ
     }
 }
 
-void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* activeNodes) {
+void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* knownNodes) {
     chain = blockchain;
     
     std::thread s(server.run(8080, nodeCommunicate));     // Run the node server
     std::thread v(validate());                            // Validate the block vectors
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++) {    // Run the client
-            std::thread c(connectToNode(activeNodes[i].y, activeNodes[i].z, communicate, '0');    // Initially request the # of shards + # of blocks in latest shard
+        for(int i = 0; i < knownNodes.size(); i++) {    // Run the client
+            std::thread c(connectToNode(knownNodes[i].y, knownNodes[i].z, communicate, '0');    // Initially request the # of shards + # of blocks in latest shard
         
             // Pass through the node bias
-            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            bias = knownNodes[i].i;    // Set the bias (for the communicate() functions)
             while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
         }
     }
 }
 
-void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* activeNodes, std::vector<NodeInfo> nodes) {
+void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* knownNodes, std::vector<NodeInfo> nodes) {
     chain = blockchain;
 
     std::thread s(server.run(8080, nodeCommunicate));     // Run the server
     std::thread v(validate());                            // Validate the block vectors
 
     while(1) {
-        for(int i = 0; i < activeNodes.size(); i++) {    // Run the onion-client
+        for(int i = 0; i < knownNodes.size(); i++) {    // Run the onion-client
             NodeInfo n;                                  // Add the destination to the end of the nodes vector
-            n.address = activeNodes[i].x;
-            n.location.address = activeNodes[i].y;
-            n.location.port = activeNodes[i].z
+            n.address = knownNodes[i].x;
+            n.location.address = knownNodes[i].y;
+            n.location.port = knownNodes[i].z
             nodes.push_back(n);
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
 
             // Pass through the node bias
-            bias = activeNodes[i].i;    // Set the bias (for the communicate() functions)
+            bias = knownNodes[i].i;    // Set the bias (for the communicate() functions)
             while(bias > 0)             // While the bias is filled (the thread hasnt gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5);   // Pause for a couple milliseconds
 

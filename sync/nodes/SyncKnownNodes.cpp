@@ -3,10 +3,10 @@
 
 void SyncKnownNodes::validate() {
     while(1) {
-        while(unverifiedNodes.size() < numOfknownnodes - 2)        // Wait until unverifiedNodes fills up
+        while(unverifiedNodes.size() < numOfActiveNodes - 2)        // Wait until unverifiedNodes fills up
             std::this_thread::sleep_for(std::chrono::seconds(5));
 
-        numOfknownnodes = 0;   // Reset the active nodes counter
+        numOfActiveNodes = 0;   // Reset the active nodes counter
 
         // Verify
         std::vector<std::pair<int, unsigned long>> counter;    // first int holds index of unique node vector, whilst the int counts how many instances of it occurs
@@ -140,13 +140,13 @@ std::vector<Position4D> SyncKnownNodes::convertString(std::string nodes) {
 template<typename T>
 void SyncKnownNodes::connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage) {
     if(client.connectToServer(ip, port, communicate, initialMessage) == true)
-        numOfknownnodes++;
+        numOfActiveNodes++;
 }
 
 template<typename T>
 void SyncKnownNodes::connectToNodeOnion(std::vector<NodeInfo> nodes, std::string (T::*communicate)(std::string), std::string initialMessage) {
     if(onion.connectToServer(nodes, initialMessage, communicate) == true)
-        numOfknownnodes++;
+        numOfActiveNodes++;
 }
 
 std::string SyncKnownNodes::communicate(std::string input) {

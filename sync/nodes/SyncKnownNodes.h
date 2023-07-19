@@ -47,7 +47,7 @@ private:
 public:
     SyncKnownNodes() {};
 
-    // Runs in its own core - constantly syncs the known nodes: activeNodes does not need to be filled, however knownNodes should contain atleast 1 active node
+    // Runs in its own core - constantly syncs the known nodes: knownNodes should contain atleast 1 active node
     //   -> Designed to take pointers to constantly changing vectors (changed in other threads)
     //   -> sync() is for wallets + misc programs and nodeSync() is for nodes
     void sync(std::vector<Position4D>* knownNodes);                                      // Non Onion-Routing
