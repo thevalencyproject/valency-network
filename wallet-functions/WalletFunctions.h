@@ -18,14 +18,12 @@
 class WalletFunctions {
 private:
     Client client;
-    FileReader reader;
-    FileWriter writer;
     WinternitzSignature winternitz;
     
     Onion onion(2);
     NTRUencrypt ntru(3);
     AESEncryption AES(256);
-    Sync sync(false, "blockchain.vlnc", "activenodes.vlnc", "knownnodes.vlnc");
+    Sync sync(false, "blockchain.vlnc", "knownnodes.vlnc");
 
 public:
     WalletFunctions() {};
@@ -41,8 +39,8 @@ public:
     std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes);     // Sends the multi-transaction (also handles single index vectors for single transactions)
 
     // Getter Functions
-    Block getBlock(unsigned int shard, unsigned int block);                // Get a specific block from the blockchain
-    std::vector<Block> getBlock(unsigned int shard, unsigned int block);   // Used to download the blockchain/parts of the blockchain
+    Block getBlock(unsigned int shard, unsigned int block);                                             // Get a specific block from the blockchain
+    std::vector<Block> getBlocks(std::vector<unsigned int> shards, std::vector<unsigned int> blocks);   // Gets the requested blocks - ensure shard and block vector index match
 
     // Scanner Functions
     std::vector<Block> relatedBlocks(std::string privateKey);                                                 // Scans the blockchain and returns a vector of any blocks that are related to the privateKey inputted (sender, receiver, or used as decoy in TRS!)

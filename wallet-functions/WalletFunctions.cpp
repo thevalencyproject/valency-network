@@ -36,11 +36,19 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(bool singleTra
 }
 
 Block WalletFunctions::getBlock(unsigned int shard, unsigned int block) {
-
+    return sync.blockchain.chain[shard].shard[block];
 }
 
-std::vector<Block> WalletFunctions::getBlock(unsigned int shard, unsigned int block) {
+std::vector<Block> WalletFunctions::getBlocks(std::vector<unsigned int> shards, std::vector<unsigned int> blocks) {
+    std::vector<Block> output;
 
+    if(shards.size() != blocks.size())          // Check that the input vectors are the same size
+        return output;                          //    -> Returns the blank output vector
+
+    for(int i = 0; i < shards.size(); i++)      // Fill the output vector with the requested blocks
+        output.push_back(sync.blockchain.chain[shards[i]].shard[blocks[i]]);
+
+    return output;
 }
 
 std::vector<Block> WalletFunctions::relatedBlocks(std::string privateKey) {
