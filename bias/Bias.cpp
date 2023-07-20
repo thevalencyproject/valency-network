@@ -1,6 +1,11 @@
 #include "Bias.h"
 
 
+Bias::Bias(Blockchain* blockchain, std::vector<Position4D>* nodes) {
+    while(1)
+        std::thread bias(refreshBias(blockchain, nodes));   // Constantly refresh biases
+}
+
 // So far, this bias function runs 100% on proof-of-stake, however, bias will be added based on node bandwidth (this will be dynamic like the whitepaper states)
 void Bias::refreshBias(Blockchain* blockchain, std::vector<Position4D>* nodes) {
     for(int i = 0; i < blockchain->numOfShards; i++) {   // Loop through each shard in the blockchain
@@ -26,6 +31,8 @@ void Bias::refreshBias(Blockchain* blockchain, std::vector<Position4D>* nodes) {
             }
         }
     }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for 5ms
 }
 
 void Bias::refreshBias(Blockchain* blockchain, std::string nodePublicAddress, std::vector<Position4D>* nodes) {
