@@ -29,18 +29,19 @@ public:
     WalletFunctions() {};
 
     // Generator Functions
-    std::string generatePublicKey(std::string privateKey);                                                                          // Generates the NTRUencrypt public key from the corresponding private key
+    std::string generatePublicKey(std::string privateKey);
     std::pair<std::string, std::string> generateKeyPair(std::string username, std::string password);                                // Generates an NTRUencyrpt key pair from a username + password (used as seeds)
     std::pair<std::string, std::string> generateStealthKeyPair(std::string publicKey, std::string privateKey, unsigned int index);  // Index is the number of stealth key pairs already generated + 1
 
-    // Transaction Functions
-    std::pair<std::string, double> requestTransactionFee(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);                           // Returns the transaction fee and expiration time (min 30 seconds)
+    // Transaction Functions                                                                                        //  - gets this from the Sync Framework
     std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);                               // Sends the transaction
     std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes);     // Sends the multi-transaction (also handles single index vectors for single transactions)
 
     // Getter Functions
-    Block getBlock(unsigned int shard, unsigned int block);                                             // Get a specific block from the blockchain
-    std::vector<Block> getBlocks(std::vector<unsigned int> shards, std::vector<unsigned int> blocks);   // Gets the requested blocks - ensure shard and block vector index match
+    std::pair<std::string, double> getTransactionFee(int numOfTransactions);                                            // Gets the transaction fee from the Sync Framework - Returns the transaction fee and expiration time (min 30 seconds)
+    std::pair<std::string, double> getTransactionFee(int numOfTransactions, bool onionRouting, int numOfOnionNodes);    // Gets the transaction fee from the Sync Framework - Returns the transaction fee and expiration time (min 30 seconds) - Onion Routing
+    Block getBlock(unsigned int shard, unsigned int block);                                                             // Get a specific block from the Sync Framework
+    std::vector<Block> getBlocks(std::vector<unsigned int> shards, std::vector<unsigned int> blocks);                   // Gets the requested blocks - ensure shard and block vector index match
 
     // Scanner Functions
     std::vector<Block> relatedBlocks(std::string privateKey);                                                 // Scans the blockchain and returns a vector of any blocks that are related to the privateKey inputted (sender, receiver, or used as decoy in TRS!)

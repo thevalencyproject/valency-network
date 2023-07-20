@@ -23,16 +23,22 @@ std::pair<std::string, std::string> WalletFunctions::generateStealthKeyPair(std:
     return output;
 }
 
-std::pair<std::string, double> WalletFunctions::requestTransactionFee(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes) {
-
-}
-
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes) {
     
 }
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes) {
 
+}
+
+std::pair<std::string, double> WalletFunctions::getTransactionFee(int numOfTransactions) {
+    // getTransactionFee returns a std::pair from the Sync framework - dependant on the number of transactions and number of onion nodes (sync keeps each possible outcome in a vector)
+    sync.getTransactionFee(numOfTransactions);
+}
+
+std::pair<std::string, double> WalletFunctions::getTransactionFee(int numOfTransactions, bool onionRouting, int numOfOnionNodes) {
+    // Returns a std::pair from the Sync framework - dependant on the number of transactions and number of onion nodes (sync keeps each possible outcome in a vector)
+    sync.getTransactionFee(numOfTransactions, numOfOnionNodes);
 }
 
 Block WalletFunctions::getBlock(unsigned int shard, unsigned int block) {
