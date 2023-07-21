@@ -67,7 +67,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<Position4D>* known
 
     while(1) {
         for(int i = 0; i < knownNodes.size(); i++) {     // Run the client   
-            std::thread c(connectToNode(knownNodes[i].y, knownNodes[i].z, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(connectToNode(knownNodes[i].y, 8080, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
 
             // Pass through the node bias
             bias = knownNodes[i].i;    // Set the bias (for the communicate() functions)
@@ -110,7 +110,7 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<Position4D>* k
 
     while(1) {
         for(int i = 0; i < knownNodes.size(); i++) {    // Run the client
-            std::thread c(connectToNode(knownNodes[i].y, knownNodes[i].z, communicate, '0');    // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(connectToNode(knownNodes[i].y, 8080, communicate, '0');    // Initially request the # of shards + # of blocks in latest shard
         
             // Pass through the node bias
             bias = knownNodes[i].i;    // Set the bias (for the communicate() functions)
