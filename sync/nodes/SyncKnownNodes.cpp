@@ -233,7 +233,7 @@ void SyncKnownNodes::sync(std::vector<Position4D>* knownNodes) {
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {     // Run the client
-            std::thread c(connectToNode(knownnodes[i].y, knownnodes[i].z, communicate, '0'));    // Initially request the # of known nodes on the network
+            std::thread c(connectToNode(knownnodes[i].y, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
         
             // Pass through the node bias
             bias = knownnodes[i].i;    // Set the bias (for the communicate() functions)
@@ -276,7 +276,7 @@ void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes) {
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {      // Run the client
-            std::thread c(connectToNode(knownnodes[i].y, knownnodes[i].z, communicate, '0'));    // Initially request the # of known nodes on the network
+            std::thread c(connectToNode(knownnodes[i].y, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
 
             // Pass through the node bias
             bias = knownnodes[i].i;    // Set the bias (for the communicate() functions)
