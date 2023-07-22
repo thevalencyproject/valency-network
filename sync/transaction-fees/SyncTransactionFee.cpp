@@ -23,13 +23,23 @@ void SyncTransactionFee::syncExpiry() {
     }
 }
 
-SyncTransactionFee::SyncTransactionFee(std::vector<Position4D>* knownNodes) {
-    std::thread expirysyncthread(syncExpiry());       // Create a thread that syncs the fee expiry time
-    std::thread feesyncthread(sync(knownNodes));      // Create a thread that syncs the fee amounts
+void SyncTransactionFee::syncFee(std::vector<Position4D>* knownNodes) {
+    while(1) {
+        int numOfActiveNodes = 0;
+        for(int i = 0; i < knownNodes.size(); i++)
+            if(client.connectToServer(knownNodes.y, 8081, NULL, '2') == true)   // Send a quit message
+                numOfActiveNodes++;    // Use the syncknownnodes framework port to determine if a node is active or not
+        
+        // Calculate the transaction fee's (THIS IS BASIC - NEEDS REVISION)
+        double basefee = (config.networkLoad + numOfActiveNodes) / 10000;    // The base fee per single transaction
+        for(int i = 1; i <= 10; i++)                                         // For each transaction after, multiply, and add 1:
+            transactionfees.push_back((basefee * i) + i);
+    }
 }
 
 void SyncTransactionFee::sync(std::vector<Position4D>* knownNodes) {
-    
+    std::thread expirysyncthread(syncExpiry());          // Create a thread that syncs the fee expiry time
+    std::thread feesyncthread(syncFee(knownNodes));      // Create a thread that syncs the fee amounts
 }
 
 std::pair<std::string, double> SyncTransactionFee::getTransactionFee(int numOfTransactions) {
@@ -39,15 +49,5 @@ std::pair<std::string, double> SyncTransactionFee::getTransactionFee(int numOfTr
     std::pair<std::string, double> output;
     output.first = expiry.str();
     output.second = transactionfees[numOfTransactions];     // The first 10 values in transactionfees vector are non-onion routing
-    return output;
-}
-
-std::pair<std::string, double> SyncTransactionFee::getTransactionFee(int numOfTransactions, int numOfOnionNodes) {
-    if(numOfTransactions > 10 || numOfTransactions < 1 || numOfOnionNodes > 6 || numOfOnionNodes < 3)     // Invalid Number of Transactions
-        return;
-
-    std::pair<std::string, double> output;
-    output.first = expiry.str();
-    output.second = transactionfees[numOfTransactions + (numOfOnionNodes * 10) - 20];
     return output;
 }
