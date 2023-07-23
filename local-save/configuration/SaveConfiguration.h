@@ -2,6 +2,8 @@
 #define SAVECONFIGURATION_H
 
 #include <string>
+#include <vector>
+#include "configuration/Configuration.h"
 #include "valency-core/file-recognition/file-writer/FileWriter.h"
 #include "valency-core/file-recognition/file-reader/FileReader.h"
 
