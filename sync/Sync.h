@@ -1,8 +1,9 @@
 #ifndef SYNC_H
 #define SYNC_H
 
-#include "blockchain/SyncBlockchain.h"
 #include "nodes/SyncKnownNodes.h"
+#include "blockchain/SyncBlockchain.h"
+#include "local-save/configuration/SaveConfiguration.h"
 
 
 struct Sync {
@@ -14,9 +15,10 @@ struct Sync {
     std::string knownNodesFilepath;
     std::string configurationFilepath;
 
-    // The syncing frameworks for each object
+    // The syncing/save frameworks for each object
     SyncBlockchain syncBlockchain;
     SyncKnownNodes syncKnownNodes;
+    SaveConfiguration saveConfiguration;    // Network Configuration is not synced
 
     // Starts syncing the blockchain, activeNodes, and knownNodes on construction
     //  -> Input whether it is running as a node, or as a wallet (or anything else for that matter)

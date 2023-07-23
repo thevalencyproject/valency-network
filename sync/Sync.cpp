@@ -47,15 +47,12 @@ Sync::Sync(bool node, std::string configurationPath, std::string blockchainPath,
 
 Sync::~Sync() { saveBlockchain(); saveKnownNodes(); }     // Save the data to file
 
+void Sync::readConfiguration(std::string filepath) { saveConfiguration.read(configuration, configurationFilepath); }
 void Sync::readBlockchain() { syncBlockchain.read(blockchain, blockchainFilepath); }
 void Sync::readKnownNodes() { syncKnownNodes.read(knownNodes, knownNodesFilepath); }
+void Sync::saveConfiguration(std::string filepath) { saveConfiguration.save(configuration, configurationFilepath) }
 void Sync::saveBlockchain() { syncBlockchain.save(blockchain, blockchainFilepath); }
 void Sync::saveKnownNodes() { syncKnownNodes.save(knownNodes, knownNodesFilepath); }
 
-void Sync::readConfiguration(std::string filepath) {
 
-}
 
-void Sync::saveConfiguration(std::string filepath) {
-    
-}
