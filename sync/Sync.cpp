@@ -1,8 +1,9 @@
 #include "Sync.h"
 
 
-Sync::Sync(bool node, std::string blockchainPath, std::string knownNodesPath) {     // Non Onion-Routing
+Sync::Sync(bool node, std::string configurationPath, std::string blockchainPath, std::string knownNodesPath) {     // Non Onion-Routing
     // Set file paths
+    configurationFilepath = configurationPath;
     blockchainFilepath = blockchainPath;
     knownNodesFilepath = knownNodesPath;
 
@@ -22,13 +23,14 @@ Sync::Sync(bool node, std::string blockchainPath, std::string knownNodesPath) { 
     }
 }
 
-Sync::Sync(bool node, std::string blockchainPath, std::string knownNodesPath, std::vector<NodeInfo> nodes) {    // Onion Routing
+Sync::Sync(bool node, std::string configurationPath, std::string blockchainPath, std::string knownNodesPath, std::vector<NodeInfo> nodes) {    // Onion Routing
     // Set file paths
+    configurationFilepath = configurationPath;
     blockchainFilepath = blockchainPath;
     knownNodesFilepath = knownNodesPath;
 
     // Read each file
-    readBlockchain(); readKnownNodes();
+    readConfiguration(); readBlockchain(); readKnownNodes();
 
     // Continuously Sync (these open in new threads) - uses the onion-routing function versions
     switch(node) {
@@ -49,3 +51,11 @@ void Sync::readBlockchain() { syncBlockchain.read(blockchain, blockchainFilepath
 void Sync::readKnownNodes() { syncKnownNodes.read(knownNodes, knownNodesFilepath); }
 void Sync::saveBlockchain() { syncBlockchain.save(blockchain, blockchainFilepath); }
 void Sync::saveKnownNodes() { syncKnownNodes.save(knownNodes, knownNodesFilepath); }
+
+void Sync::readConfiguration(std::string filepath) {
+
+}
+
+void Sync::saveConfiguration(std::string filepath) {
+    
+}
