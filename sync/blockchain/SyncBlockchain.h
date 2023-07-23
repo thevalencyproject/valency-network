@@ -3,6 +3,7 @@
 
 #include <thread>
 #include "structures/Blockchain.h"
+#include "configuration/Configuration.h"
 #include "valency-core/custom-types/Position.h"
 #include "local-save/blockchain/SaveBlockchain.h"
 #include "valency-core/networking/client/Client.h"
@@ -14,6 +15,7 @@
 class SyncBlockchain {
 private:
     Blockchain* chain;
+    Configuration* configuration;     // A pointer to the network configuration
     
     unsigned int numOfActiveNodes;                                                 // The number of nodes that are active on the network
     unsigned long bias = 0;                                                        // Node Bias - replicating mutex without mutex
@@ -41,7 +43,7 @@ private:
     std::string nodeCommunicate(std::string input);     // Node Only: Passed into the networking frameworks (client, server, and onion can use same function)
 
 public:
-    SyncBlockchain() {};
+    SyncBlockchain(Configuration* config) { configuration = config; };
 
     // Runs in its own core - constantly syncs the blockchain: Ensure the knownnodes vector is up to date
     //   -> Designed to take pointers to constantly changing vectors (changed in other threads)

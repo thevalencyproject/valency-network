@@ -16,9 +16,9 @@ struct Sync {
     std::string configurationFilepath;
 
     // The syncing/save frameworks for each object
-    SyncBlockchain syncBlockchain;
-    SyncKnownNodes syncKnownNodes;
-    SaveConfiguration saveConfiguration;    // Network Configuration is not synced
+    SyncBlockchain syncBlockchain(&configuration);
+    SyncKnownNodes syncKnownNodes(&configuration);
+    SaveConfiguration saveConfiguration;                // Network Configuration is not synced
 
     // Starts syncing the blockchain, activeNodes, and knownNodes on construction
     //  -> Input whether it is running as a node, or as a wallet (or anything else for that matter)

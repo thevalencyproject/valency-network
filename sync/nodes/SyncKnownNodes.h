@@ -3,6 +3,7 @@
 
 #include <thread>
 #include "local-save/nodes/SaveNodes.h"
+#include "configuration/Configuration.h"
 #include "valency-core/custom-types/Position.h"
 #include "valency-core/networking/client/Client.h"
 #include "valency-core/networking/server/Server.h"
@@ -17,6 +18,7 @@ private:
        z: Port
        i: Bias */
     std::vector<Position4D>* knownnodes;
+    Configuration* configuration;                  // A pointer to the network configuration
 
     int numberOfDefaultNodes = 5;                                                       // The number of nodes that are included in the program by default
     unsigned int numOfActiveNodes;                                                      // The number of nodes that are active on the network
@@ -45,7 +47,7 @@ private:
     std::string nodeCommunicate(std::string input);     // Node Only: Passed into the networking frameworks (client, server, and onion can use same function)
 
 public:
-    SyncKnownNodes() {};
+    SyncKnownNodes(Configuration* config) { configuration = config; };
 
     // Runs in its own core - constantly syncs the known nodes: knownNodes should contain atleast 1 active node
     //   -> Designed to take pointers to constantly changing vectors (changed in other threads)
