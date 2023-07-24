@@ -23,6 +23,7 @@ private:
     Onion onion(2);
     NTRUencrypt ntru(3);
     AESEncryption AES(256);
+    TraceableRingSignature signature;
     Sync sync(false, "blockchain.vlnc", "knownnodes.vlnc");
 
 public:
@@ -33,9 +34,11 @@ public:
     std::pair<std::string, std::string> generateKeyPair(std::string username, std::string password);                                // Generates an NTRUencyrpt key pair from a username + password (used as seeds)
     std::pair<std::string, std::string> generateStealthKeyPair(std::string publicKey, std::string privateKey, unsigned int index);  // Index is the number of stealth key pairs already generated + 1
 
-    // Transaction Functions                                                                                        //  - gets this from the Sync Framework
-    std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes);                               // Sends the transaction
-    std::pair<bool, TransactionInfo> sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes);     // Sends the multi-transaction (also handles single index vectors for single transactions)
+    // Transaction Functions
+    std::pair<bool, TransactionInfo> sendTransaction(std::string privateKey, std::string receiver, double amount, unsigned short decoys);                                                     // Single Transaction - no onion routing
+    std::pair<bool, TransactionInfo> sendTransaction(std::string privateKey, std::string receiver, double amount, unsigned short decoys, int numOfOnionNodes);                                // Single Transaction - onion routing
+    std::pair<bool, TransactionInfo> sendTransaction(std::string privateKey, std::vector<std::string> receivers, std::vector<double> amounts, unsigned short decoys);                         // Multi Transaction - no onion routing
+    std::pair<bool, TransactionInfo> sendTransaction(std::string privateKey, std::vector<std::string> receivers, std::vector<double> amounts, unsigned short decoys, int numOfOnionNodes);    // Multi Transaction - onion routing
 
     // Getter Functions
     std::pair<std::string, double> getTransactionFee(int numOfTransactions);                                            // Gets the transaction fee from the Sync Framework - Returns the transaction fee and expiration time (min 30 seconds)

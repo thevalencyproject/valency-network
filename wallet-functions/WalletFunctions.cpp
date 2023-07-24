@@ -23,11 +23,63 @@ std::pair<std::string, std::string> WalletFunctions::generateStealthKeyPair(std:
     return output;
 }
 
-std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(bool singleTransaction, int numOfTransactions, std::string receiver, double amount, bool onionRouting, int numOfOnionNodes) {
-    
+std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(std::string privateKey, std::string receiver, double amount, unsigned short decoys) {
+    // Check that the number of decoys is valid (these min/max still need to be decided)
+
+    // Check that the wallet has enough balance to cover the transaction amount + potential fee's
+
+    RingSignature sig = signature.generateRingSignature(amount, receiver, privateKey, decoys);     // Generate the signature
+
+    // Send the ring signature to all the active nodes on the network
+
+    // Get the replies from all active nodes, and if the number of transaction successes outweight the number of transaction failed, the transaction has gone through!
+    //  -> This takes into account the node bias system
+
 }
 
-std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(bool singleTransaction, int numOfTransactions, std::vector<std::string> receiver, std::vector<double> amount, bool onionRouting, int numOfOnionNodes) {
+std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(std::string privateKey, std::string receiver, double amount, unsigned short decoys, int numOfOnionNodes) {
+    // Check that the number of decoys is valid (these min/max still need to be decided)
+
+    // Check that the wallet has enough balance to cover the transaction amount + potential fee's
+
+    RingSignature sig = signature.generateRingSignature(amount, receiver, privateKey, decoys);     // Generate the signature
+
+    // Send the ring signature to all the active nodes on the network using onion routing
+    
+    // Get the replies from all active nodes, and if the number of transaction successes outweight the number of transaction failed, the transaction has gone through!
+    //  -> This takes into account the node bias system
+
+}
+
+std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(std::string privateKey, std::vector<std::string> receivers, std::vector<double> amounts, unsigned short decoys) {
+    // Check that the number of decoys is valid (these min/max still need to be decided)
+
+    // Check that the wallet has enough balance to cover the transaction amount + potential fee's
+
+    std::vector<RingSignature> sigs;
+    for(int i = 0; i < receivers.size(); i++)
+        sigs.push_back(signature.generateRingSignature(amounts[i], receivers[i], privateKey, decoys));     // Generate the signatures
+
+    // Send the ring signatures to all the active nodes on the network
+
+    // Get the replies from all active nodes, and if the number of transaction successes outweight the number of transaction failed, the transaction has gone through!
+    //  -> This takes into account the node bias system
+
+}
+
+std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(std::string privateKey, std::vector<std::string> receivers, std::vector<double> amounts, unsigned short decoys, int numOfOnionNodes) {
+    // Check that the number of decoys is valid (these min/max still need to be decided)
+
+    // Check that the wallet has enough balance to cover the transaction amount + potential fee's
+
+    std::vector<RingSignature> sigs;
+    for(int i = 0; i < receivers.size(); i++)
+        sigs.push_back(signature.generateRingSignature(amounts[i], receivers[i], privateKey, decoys));     // Generate the signatures
+
+    // Send the ring signatures to all the active nodes on the network using onion routing
+
+    // Get the replies from all active nodes, and if the number of transaction successes outweight the number of transaction failed, the transaction has gone through!
+    //  -> This takes into account the node bias system
 
 }
 
