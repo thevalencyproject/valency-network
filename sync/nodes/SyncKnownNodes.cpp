@@ -48,35 +48,33 @@ void SyncKnownNodes::validate() {
     }
 }
 
-std::string SyncKnownNodes::convertNode(Position4D* node) {
-// ':' between IP address and port + 32 character address at front
-
-    return node.x + node.y + '.' + std::to_string(node.z) + '.' + std::to_string(node.i);
+std::string SyncKnownNodes::convertNode(NodeDetails* node) {
+    return node.address + node.ip + '.' + std::to_string(node.port) + '.' + std::to_string(node.bias);
 }
 
-std::string SyncKnownNodes::convertNode(std::vector<Position4D>* nodes) {
+std::string SyncKnownNodes::convertNode(std::vector<NodeDetails>* nodes) {
     std::string output = std::to_string(nodes.size()) + '.';    // Append the number of nodes
 
 
     for(int i = 0; i < nodes.size(); i++)
-        output = output + node.x + node.y + ':' + std::to_string(node.z) + '.' + std::to_string(node.i) + '.';     // '.' between nodes
+        output = output + node.address + node.ip + ':' + std::to_string(node.port) + '.' + std::to_string(node.bias) + '.';     // '.' between nodes
 
     output.pop_back();  // Remove last '.'
     return output;
 }
 
-Position4D SyncKnownNodes::convertString(std::string node) {
-    Position4D output;
+NodeDetails SyncKnownNodes::convertString(std::string node) {
+    NodeDetails output;
     
-    output.x = node.substr(0, 32);
+    output.address = node.substr(0, 32);
     for(int i = 33; i < node.size(); i++) {
         if(node[i] == ':') {
-            output.y = node.substr(33, i - 1 - 33);
+            output.ip = node.substr(33, i - 1 - 33);
 
             for(int j = i; j < node.size(); j++) {
                 if(node[j] == '.') {
-                    output.z = node.substr(i, j - i);
-                    output.i = node.substr(j, node.size() - j);
+                    output.port = node.substr(i, j - i);
+                    output.bias = node.substr(j, node.size() - j);
 
                     break;
                 }
@@ -89,8 +87,8 @@ Position4D SyncKnownNodes::convertString(std::string node) {
     return output;
 }
 
-std::vector<Position4D> SyncKnownNodes::convertString(std::string nodes) {
-    std::vector<Position4D> output;
+std::vector<NodeDetails> SyncKnownNodes::convertString(std::string nodes) {
+    std::vector<NodeDetails> output;
 
     // Get the number of nodes
     int size;
@@ -103,34 +101,31 @@ std::vector<Position4D> SyncKnownNodes::convertString(std::string nodes) {
     }
 
     for(int i = 0; i < size; i++) {     // Loop once for each node in the string
-        Position4D temp;
+        NodeDetails temp;
 
-        temp.x = nodes.substr(0, 32);   // Get the public node address
+        temp.address = nodes.substr(0, 32);   // Get the public node address
         for(int j = 33; j < nodes.size(); j++) {    // Get the IP address
             if(nodes[j] == ':') {
-                temp.y = nodes.substr(33, j - 1 - 33);
+                temp.ip = nodes.substr(33, j - 1 - 33);
                 
                 for(int k = j; k < nodes.size(); k++) {    // Get the Port
                     if(nodes[k] == '.') {
-                        temp.z = nodes.substr(j, k - j);
+                        temp.port = nodes.substr(j, k - j);
 
                         for(int x = k; x < nodes.size(); x++) {
                             if(nodes[x] == '.') {
-                                temp.i = nodes.substr(k, x - k)
+                                temp.bias = nodes.substr(k, x - k)
                                 nodes.erase(0, x);
 
                                 break;
                             }
                         }
-
                         break;
                     }
                 }
-
                 break;
             }
         }
-
         output.push_back(temp);
     }
 
@@ -166,7 +161,7 @@ std::string SyncKnownNodes::communicate(std::string input) {
         input.erase(0);
 
         // Add the unverified known nodes to the vector (+ the unique node bias)
-        std::pair<std::vector<Position4D>, unsigned long> temp;
+        std::pair<std::vector<NodeDetails>, unsigned long> temp;
         temp.first.push_back(convertString(input));
         temp.second = nodebias;
         unverifiedNodes.push_back(temp);
@@ -174,13 +169,13 @@ std::string SyncKnownNodes::communicate(std::string input) {
         return "2";     // Quit Message
     }
 
-    if(input[0] == '2') {   // Get the entirity of the known nodes data returned by the individual node and store it
+    if(input[0] == '2') {   // Get the entirety of the known nodes data returned by the individual node and store it
         input.erase(0);     // Erase the function index identifier
 
         input = lzma.decompress(&input);    // Decompress the input
 
         // Add the unverified known nodes to the vector (+ the unique node bias)
-        std::pair<std::vector<Position4D>, unsigned long> temp;
+        std::pair<std::vector<NodeDetails>, unsigned long> temp;
         temp.first.push_back(convertString(input));
         temp.second = nodebias;
         unverifiedNodes.push_back(temp);
@@ -196,14 +191,13 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
     if(input[0] == '1') {   // Return the knownnodes after the position
         input.erase(0);
 
-        int position = stoi(input);    // The index position they want nodes from
-
+        int position = stoi(input);          // The index position they want nodes from
         if(position >= knownnodes.size())    // Return known nodes are already up-to-date - AKA. Quit
             return "/quit";
         
         // If the client is requesting all the known nodes (minus the default starting ones)
         if(position <= 5) {
-            std::vector<Position4D> allNodes;
+            std::vector<NodeDetails> allNodes;
 
             for(int i = 0; i < knownNodes.size(); i++)
                 allNodes.push_back(knownNodes[i]);
@@ -214,7 +208,7 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
         }
 
         // Fill the node vector to the requested size
-        std::vector<Position4D> temp;
+        std::vector<NodeDetails> temp;
         for(int i = position; i < knownnodes.size(); i++)
             temp.push_back(knownnodes[i]);
 
@@ -226,41 +220,37 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
 }
 
 
-void SyncKnownNodes::sync(std::vector<Position4D>* knownNodes) {
+void SyncKnownNodes::sync(std::vector<NodeDetails>* knownNodes) {
     knownnodes = knownNodes;
 
     std::thread v(validate());        // Validate the known nodes list
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {     // Run the client
-            std::thread c(connectToNode(knownnodes[i].y, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
+            std::thread c(connectToNode(knownnodes[i].ip, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
         
             // Pass through the node bias
-            bias = knownnodes[i].i;    // Set the bias (for the communicate() functions)
-            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+            bias = knownnodes[i].bias;    // Set the bias (for the communicate() functions)
+            while(bias > 0)               // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
         }
     }
 }
 
-void SyncKnownNodes::sync(std::vector<Position4D>* knownNodes, std::vector<NodeInfo> nodes) {
+void SyncKnownNodes::sync(std::vector<NodeDetails>* knownNodes, std::vector<NodeInfo> nodes) {
     knownnodes = knownNodes;
 
     std::thread v(validate());        // Validate the known nodes list
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {   // Run the onion-client
-            NodeInfo n;                                 // Add the destination to the end of the nodes vector
-            n.address = knownnodes[i].x;
-            n.location.address = knownnodes[i].y;
-            n.location.port = knownnodes[i].z
-            nodes.push_back(n);
+            nodes.push_back(knownnodes[i]);            // Add the destination to the end of the nodes vector
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of known nodes on the network
 
             // Pass through the node bias
-            bias = knownnodes[i].i;    // Set the bias (for the communicate() functions)
-            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+            bias = knownnodes[i].bias;    // Set the bias (for the communicate() functions)
+            while(bias > 0)               // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
 
             nodes.pop_back();   // Delete the destination info
@@ -268,7 +258,7 @@ void SyncKnownNodes::sync(std::vector<Position4D>* knownNodes, std::vector<NodeI
     }
 }
 
-void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes) {
+void SyncKnownNodes::nodeSync(std::vector<NodeDetails>* knownNodes) {
     knownnodes = knownNodes;
 
     std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
@@ -276,17 +266,17 @@ void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes) {
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {      // Run the client
-            std::thread c(connectToNode(knownnodes[i].y, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
+            std::thread c(connectToNode(knownnodes[i].ip, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
 
             // Pass through the node bias
-            bias = knownnodes[i].i;    // Set the bias (for the communicate() functions)
-            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+            bias = knownnodes[i].bias;    // Set the bias (for the communicate() functions)
+            while(bias > 0)               // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
         }
     }
 }
 
-void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes, std::vector<NodeInfo> nodes) {
+void SyncKnownNodes::nodeSync(std::vector<NodeDetails>* knownNodes, std::vector<NodeInfo> nodes) {
     knownnodes = knownNodes;
 
     std::thread s(server.run(8081, nodeCommunicate));     // Run the node server
@@ -294,17 +284,13 @@ void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes, std::vector<N
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {     // Run the onion-client
-            NodeInfo n;                                   // Add the destination to the end of the nodes vector
-            n.address = knownnodes[i].x;
-            n.location.address = knownnodes[i].y;
-            n.location.port = knownnodes[i].z
-            nodes.push_back(n);
+            nodes.push_back(knownnodes[i]);              // Add the destination to the end of the nodes vector
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of known nodes on the network
 
             // Pass through the node bias
-            bias = knownnodes[i].i;     // Set the bias (for the communicate() functions)
-            while(bias > 0)             // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
+            bias = knownnodes[i].bias;     // Set the bias (for the communicate() functions)
+            while(bias > 0)                // While the bias is filled (the thread hasn't gotten it yet [thread auto sets bias to zero])
                 std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for a couple milliseconds
 
             nodes.pop_back();   // Delete the destination info
@@ -312,10 +298,10 @@ void SyncKnownNodes::nodeSync(std::vector<Position4D>* knownNodes, std::vector<N
     }
 }
 
-void SyncKnownNodes::read(std::vector<Position4D>* knownNodes, std::string filePath) {
+void SyncKnownNodes::read(std::vector<NodeDetails>* knownNodes, std::string filePath) {
     save.read(knownNodes, filePath);
 }
 
-void SyncKnownNodes::save(std::vector<Position4D>* knownNodes, std::string filePath) {
+void SyncKnownNodes::save(std::vector<NodeDetails>* knownNodes, std::string filePath) {
     save.save(knownNodes, filePath);
 }
