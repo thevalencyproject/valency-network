@@ -23,11 +23,11 @@ void SyncTransactionFee::syncExpiry() {
     }
 }
 
-void SyncTransactionFee::syncFee(std::vector<Position4D>* knownNodes) {
+void SyncTransactionFee::syncFee(std::vector<NodeDetails>* knownNodes) {
     while(1) {
         int numOfActiveNodes = 0;
         for(int i = 0; i < knownNodes.size(); i++)
-            if(client.connectToServer(knownNodes.y, 8081, NULL, '2') == true)   // Send a quit message
+            if(client.connectToServer(knownNodes.ip, 8081, NULL, '2') == true)   // Send a quit message
                 numOfActiveNodes++;    // Use the syncknownnodes framework port to determine if a node is active or not
         
         // Calculate the transaction fee's (THIS IS BASIC - NEEDS REVISION)
@@ -37,7 +37,7 @@ void SyncTransactionFee::syncFee(std::vector<Position4D>* knownNodes) {
     }
 }
 
-void SyncTransactionFee::sync(std::vector<Position4D>* knownNodes) {
+void SyncTransactionFee::sync(std::vector<NodeDetails>* knownNodes) {
     std::thread expirysyncthread(syncExpiry());          // Create a thread that syncs the fee expiry time
     std::thread feesyncthread(syncFee(knownNodes));      // Create a thread that syncs the fee amounts
 }

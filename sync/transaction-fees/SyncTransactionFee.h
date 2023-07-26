@@ -8,6 +8,7 @@
 #include <thread>
 #include <sstream>
 #include <iomanip>
+#include "structures/Node.h"
 #include "configuration/Configuration.h"
 #include "valency-core/custom-types/Position.h"
 #include "valency-core/networking/client/Client.h"
@@ -25,13 +26,13 @@ private:
     Client client;
     Configuration config;
 
-    void syncExpiry();                                     // Syncs the expiry time - this increments by 30s every 30s - doesn't need to get current expiry from other nodes because it just increments by 30s every 30s (starting from 0s)
-    void syncFee(std::vector<Position4D>* knownNodes);     // Syncs the transaction fee - requires Knownnodes list to get the number of active nodes (used to determine network load and therefore fee's)
+    void syncExpiry();                                      // Syncs the expiry time - this increments by 30s every 30s - doesn't need to get current expiry from other nodes because it just increments by 30s every 30s (starting from 0s)
+    void syncFee(std::vector<NodeDetails>* knownNodes);     // Syncs the transaction fee - requires Knownnodes list to get the number of active nodes (used to determine network load and therefore fee's)
 
 public:
-    SyncTransactionFee() {};   
+    SyncTransactionFee() {};
 
-    void sync(std::vector<Position4D>* knownNodes);     // Creates and runs its own thread doing sync()   
+    void sync(std::vector<NodeDetails>* knownNodes);     // Creates and runs its own thread doing sync()   
     
     std::pair<std::string, double> getTransactionFee(int numOfTransactions);                         // Returns the transaction fee and expiry
 };
