@@ -244,7 +244,11 @@ void SyncKnownNodes::sync(std::vector<NodeDetails>* knownNodes, std::vector<Node
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {   // Run the onion-client
-            nodes.push_back(knownnodes[i]);            // Add the destination to the end of the nodes vector
+            NodeInfo n;
+            n.address = knownnodes[i].address;
+            n.location.address = knownnodes[i].ip;
+            n.location.port = knownnodes[i].port;
+            nodes.push_back(n);                        // Add the destination to the end of the nodes vector
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of known nodes on the network
 
@@ -284,7 +288,11 @@ void SyncKnownNodes::nodeSync(std::vector<NodeDetails>* knownNodes, std::vector<
 
     while(1) {
         for(int i = 0; i < knownnodes.size(); i++) {     // Run the onion-client
-            nodes.push_back(knownnodes[i]);              // Add the destination to the end of the nodes vector
+            NodeInfo n;
+            n.address = knownnodes[i].address;
+            n.location.address = knownnodes[i].ip;
+            n.location.port = knownnodes[i].port;
+            nodes.push_back(n);                          // Add the destination to the end of the nodes vector
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of known nodes on the network
 
