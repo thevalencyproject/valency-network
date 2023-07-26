@@ -48,10 +48,10 @@ public:
     // Runs in its own core - constantly syncs the blockchain: Ensure the knownnodes vector is up to date
     //   -> Designed to take pointers to constantly changing vectors (changed in other threads)
     //   -> sync() is for wallets + misc programs and nodeSync() is for nodes
-    void sync(Blockchain* blockchain, std::vector<Position4D>* knownNodes);                                    // Non Onion-Routing
-    void sync(Blockchain* blockchain, std::vector<Position4D>* knownNodes, std::vector<NodeInfo> nodes);       // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
-    void nodeSync(Blockchain* blockchain, std::vector<Position4D>* knownNodes);                                // Non Onion-Routing
-    void nodeSync(Blockchain* blockchain, std::vector<Position4D>* knownNodes, std::vector<NodeInfo> nodes);   // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
+    void sync(Blockchain* blockchain, std::vector<NodeDetails>* knownNodes);                                    // Non Onion-Routing
+    void sync(Blockchain* blockchain, std::vector<NodeDetails>* knownNodes, std::vector<NodeInfo> nodes);       // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
+    void nodeSync(Blockchain* blockchain, std::vector<NodeDetails>* knownNodes);                                // Non Onion-Routing
+    void nodeSync(Blockchain* blockchain, std::vector<NodeDetails>* knownNodes, std::vector<NodeInfo> nodes);   // Onion-Routing - ensure nodes vector only contains onion-routing nodes and not destination server
 
     void read(Blockchain* blockchain, std::string filePath);    // Also has a file reading/writing functionality through the local-save framework (in valency-network)
     void save(Blockchain* blockchain, std::string filePath);    //   -> filePath should contain the file name / SaveBlockchain save;
