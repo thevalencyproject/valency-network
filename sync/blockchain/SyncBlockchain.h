@@ -2,6 +2,7 @@
 #define SYNCBLOCKCHAIN_H
 
 #include <thread>
+#include "structures/Node.h"
 #include "structures/Blockchain.h"
 #include "configuration/Configuration.h"
 #include "valency-core/custom-types/Position.h"
