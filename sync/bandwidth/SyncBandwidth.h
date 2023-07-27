@@ -23,6 +23,11 @@ private:
     Client client;
     Onion onion(2);
 
+    std::string convertBandwidth(unsigned short* bandwidth);                // Converts a block into string form - used for network communication
+    std::string convertBandwidth(std::vector<unsigned short>* bandwidth);   // Converts a vector of blocks into string form - used for network communication
+    unsigned short convertString(std::string bandwidth);                    // Converts string to a block (string should come from convertBlock() function)
+    std::vector<unsigned short> convertString(std::string bandwidth);       // Converts string to a vector of blocks (string should come from convertBlock() function)
+
     // Interfaces with the client networking framework to connect to a node and increment numOfActiveNodes
     template<typename T>
     void connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage);
