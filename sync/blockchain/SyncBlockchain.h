@@ -5,7 +5,6 @@
 #include "structures/Node.h"
 #include "structures/Blockchain.h"
 #include "configuration/Configuration.h"
-#include "valency-core/custom-types/Position.h"
 #include "local-save/blockchain/SaveBlockchain.h"
 #include "valency-core/networking/client/Client.h"
 #include "valency-core/networking/server/Server.h"
@@ -29,7 +28,7 @@ private:
     SaveBlockchain save;
     LZMACompression lzma;
 
-    std::string convertBlock(Block* block);     // Converts a block into string form - used for network communication
+    std::string convertBlock(Block* block);                 // Converts a block into string form - used for network communication
     std::string convertBlock(std::vector<Block>* blocks);   // Converts a vector of blocks into string form - used for network communication
     Block convertString(std::string block);                 // Converts string to a block (string should come from convertBlock() function)
     std::vector<Block> convertString(std::string blocks);   // Converts string to a vector of blocks (string should come from convertBlock() function)
