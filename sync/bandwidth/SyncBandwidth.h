@@ -14,10 +14,10 @@ private:
     std::vector<unsigned short> bandwidth;     // The bandwidth value for every node - index corresponds to knownnode index
     Configuration* configuration;              // A pointer to the network configuration
     
-    unsigned int numOfActiveNodes;                                                 // The number of nodes that are active on the network
-    unsigned long bias = 0;                                                        // Node Bias - replicating mutex without mutex
-    std::vector<std::vector<unsigned short>> unverifiedbandwidth;                  // The bandwidth that some nodes have sent, but others havent (not 100% verified yet)
-    void validate();                                                               // Validates the incoming bandwidth from the nodes
+    unsigned int numOfActiveNodes;                                                             // The number of nodes that are active on the network
+    unsigned long bias = 0;                                                                    // Node Bias - replicating mutex without mutex
+    std::vector<std::pair<std::vector<unsigned short>, unsigned long>> unverifiedbandwidth;    // The bandwidth that some nodes have sent, but others havent (not 100% verified yet)
+    void validate();                                                                           // Validates the incoming bandwidth from the nodes
 
     Server server;
     Client client;
