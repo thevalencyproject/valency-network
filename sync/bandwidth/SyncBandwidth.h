@@ -11,8 +11,8 @@
 
 class SyncBandwidth {
 private:
-    std::vector<unsigned short> bandwidth;     // The bandwidth value for every node - index corresponds to knownnode index
-    Configuration* configuration;              // A pointer to the network configuration
+    std::vector<unsigned short> activebandwidth;     // The bandwidth value for every node - index corresponds to knownnode index
+    Configuration* configuration;                    // A pointer to the network configuration
     
     unsigned int numOfActiveNodes;                                                             // The number of nodes that are active on the network
     unsigned long bias = 0;                                                                    // Node Bias - replicating mutex without mutex
