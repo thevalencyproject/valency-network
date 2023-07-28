@@ -96,7 +96,7 @@ void SyncBandwidth::sync(std::vector<unsigned short>* bandwidth, std::vector<Nod
             NodeInfo n;                                 // Add the destination to the end of the nodes vector
             n.address = knownNodes[i].address;
             n.location.address = knownNodes[i].ip;
-            n.location.port = knownNodes[i].port;
+            n.location.port = 8082;
             nodes.push_back(n);
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the network bandwidth (bandwidth of each node)
@@ -137,10 +137,10 @@ void SyncBandwidth::nodeSync(std::vector<unsigned short>* bandwidth, std::vector
 
     while(1) {
         for(int i = 0; i < knownNodes.size(); i++) {    // Run the onion-client
-            NodeInfo n;                                  // Add the destination to the end of the nodes vector
+            NodeInfo n;                                 // Add the destination to the end of the nodes vector
             n.address = knownNodes[i].address;
             n.location.address = knownNodes[i].ip;
-            n.location.port = knownNodes[i].port;
+            n.location.port = 8082;
             nodes.push_back(n);
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the network bandwidth (bandwidth of each node)
