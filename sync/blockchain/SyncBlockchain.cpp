@@ -87,7 +87,7 @@ void SyncBlockchain::sync(Blockchain* blockchain, std::vector<NodeDetails>* know
             NodeInfo n;                                 // Add the destination to the end of the nodes vector
             n.address = knownNodes[i].address;
             n.location.address = knownNodes[i].ip;
-            n.location.port = knownNodes[i].port;
+            n.location.port = 8080;
             nodes.push_back(n);
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
@@ -110,7 +110,7 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<NodeDetails>* 
 
     while(1) {
         for(int i = 0; i < knownNodes.size(); i++) {    // Run the client
-            std::thread c(connectToNode(knownNodes[i].ip, 8080, communicate, '0');    // Initially request the # of shards + # of blocks in latest shard
+            std::thread c(connectToNode(knownNodes[i].ip, 8080, communicate, '0'));    // Initially request the # of shards + # of blocks in latest shard
         
             // Pass through the node bias
             bias = knownNodes[i].bias;    // Set the bias (for the communicate() functions)
@@ -131,7 +131,7 @@ void SyncBlockchain::nodeSync(Blockchain* blockchain, std::vector<NodeDetails>* 
             NodeInfo n;                                  // Add the destination to the end of the nodes vector
             n.address = knownNodes[i].address;
             n.location.address = knownNodes[i].ip;
-            n.location.port = knownNodes[i].port;
+            n.location.port = 8080;
             nodes.push_back(n);
 
             std::thread c(connectToNodeOnion(nodes, communicate, '0'));     // Initially request the # of shards + # of blocks in latest shard
