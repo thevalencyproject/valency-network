@@ -38,7 +38,7 @@ void SyncBandwidth::validate() {
         }
 
         // Update the activebandwidth vector with the highest instance counter in the counter vector to the end of the knownnodes vector
-        activebandwidth.cl;e
+        activebandwidth->clear();
         for(int i = 0; i < unverifiedbandwidth[index].size(); i++)
             activebandwidth->push_back(unverifiedbandwidth[index][i]);
         
@@ -111,14 +111,14 @@ std::string SyncBandwidth::communicate(std::string input) {
 std::string SyncBandwidth::nodeCommunicate(std::string input) {
     // Only give out details - dont send requests
     if(input[0] == '0')     // Return the bandwidth
-        return '0' + convertBandwidth(activebandwidth);
+        return '0' + convertBandwidth(&activebandwidth);
 
     if(input[0] == '1')   // Client is quitting - send the quit message
         return "/quit";
 }
 
 void SyncBandwidth::sync(std::vector<unsigned short>* bandwidth, std::vector<NodeDetails>* knownNodes) {
-    activebandwidth = &bandwidth;
+    activebandwidth = bandwidth;
 
     std::thread v(validate());        // Validate the bandwidth vectors
 
@@ -135,7 +135,7 @@ void SyncBandwidth::sync(std::vector<unsigned short>* bandwidth, std::vector<Nod
 }
 
 void SyncBandwidth::sync(std::vector<unsigned short>* bandwidth, std::vector<NodeDetails>* knownNodes, std::vector<NodeInfo> nodes) {
-    activebandwidth = &bandwidth;
+    activebandwidth = bandwidth;
 
     std::thread v(validate());        // Validate the bandwidth vectors
 
@@ -160,7 +160,7 @@ void SyncBandwidth::sync(std::vector<unsigned short>* bandwidth, std::vector<Nod
 }
 
 void SyncBandwidth::nodeSync(std::vector<unsigned short>* bandwidth, std::vector<NodeDetails>* knownNodes) {
-    activebandwidth = &bandwidth;
+    activebandwidth = bandwidth;
 
     std::thread s(server.run(8082, nodeCommunicate));     // Run the node server
     std::thread v(validate());                            // Validate the block vectors
@@ -178,7 +178,7 @@ void SyncBandwidth::nodeSync(std::vector<unsigned short>* bandwidth, std::vector
 }
 
 void SyncBandwidth::nodeSync(std::vector<unsigned short>* bandwidth, std::vector<NodeDetails>* knownNodes, std::vector<NodeInfo> nodes) {
-    activebandwidth = &bandwidth;
+    activebandwidth = bandwidth;
 
     std::thread s(server.run(8082, nodeCommunicate));     // Run the server
     std::thread v(validate());                            // Validate the block vectors
