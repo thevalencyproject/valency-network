@@ -38,7 +38,7 @@ void SyncBandwidth::validate() {
         }
 
         // Update the activebandwidth vector with the highest instance counter in the counter vector to the end of the knownnodes vector
-        activebandwidth.clear();
+        activebandwidth.cl;e
         for(int i = 0; i < unverifiedbandwidth[index].size(); i++)
             activebandwidth->push_back(unverifiedbandwidth[index][i]);
         
@@ -74,7 +74,25 @@ std::vector<unsigned short> SyncBandwidth::convertString(std::string bandwidth) 
         if(bandwidth[i] == '.') {
             output.push_back(stoi(bandwidth.substr(prevIndex, i - prevIndex)));
             prevIndex = i;
-        }void validate()string input) {
+        }
+    }
+
+    return output;
+}
+
+template<typename T>
+void SyncBandwidth::connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage) {
+    if(client.connectToServer(ip, port, communicate, initialMessage) == true)
+        numOfActiveNodes++;
+}
+
+template<typename T>
+void SyncBandwidth::connectToNodeOnion(std::vector<NodeInfo> nodes, std::string (T::*communicate)(std::string), std::string initialMessage) {
+    if(onion.connectToServer(nodes, initialMessage, communicate) == true)
+        numOfActiveNodes++;
+}
+
+std::string SyncBandwidth::communicate(std::string input) {
     unsigned long nodebias = bias;
     bias = 0;
 
