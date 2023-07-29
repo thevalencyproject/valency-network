@@ -1,6 +1,54 @@
 #include "SyncBandwidth.h"
 
 
+void SyncBandwidth::validate() {
+    while(1) {
+        while(unverifiedNodes.size() < numOfActiveNodes - 2)        // Wait until unverifiedNodes fills up
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+
+        numOfActiveNodes = 0;   // Reset the active nodes counter
+
+        // Verify
+        std::vector<std::pair<int, unsigned long>> counter;    // first int holds index of unique bandwidth vector, whilst the int counts how many instances of it occurs
+        for(int i = 0; i < unverifiedbandwidth.size(); i++) {
+            // If the bandwidth vector is unseen before, add it to the vector... if it is seen, increment the instance counter
+            bool seen = false;
+            for(int j = 0; j < counter.size(); j++) {   // Check if it already exists in the counter
+                if(unverifiedbandwidth[i].first == unverifiedbandwidth[counter[j].first].first) {
+                    counter[j].second = counter[j].second + unverifiedbandwidth[i].second;    // Increment the instance counter (by the node bias)
+                    seen = true;
+                    break;
+                }
+            }
+            if(seen == false) {     // Not seen, therefore add to counter vector
+                std::pair<int, unsigned long> temp;
+                temp.first = i;
+                temp.second = unverifiedbandwidth[i].second;
+                counter.push_back(temp);
+            }
+        }
+
+        // Sort the counter vector to find the highest number
+        unsigned long highest, index;
+        for(int i = 0; i < counter.size(); i++) {
+            if(counter[i].second > highest) {
+                highest = counter[i].second;
+                index = counter[i].first;
+            }
+        }
+
+        // Update the activebandwidth vector with the highest instance counter in the counter vector to the end of the knownnodes vector
+        activebandwidth.clear();
+        for(int i = 0; i < unverifiedbandwidth[index].size(); i++)
+            activebandwidth->push_back(unverifiedbandwidth[index][i]);
+        
+        unverifiedbandwidth.clear();    // Clear the vector
+        counter.clear();
+        highest = 0;
+        index = 0;
+    }
+}
+
 std::string SyncBandwidth::convertBandwidth(unsigned short* bandwidth) {
     return std::to_string(&bandwidth);
 }
@@ -26,25 +74,7 @@ std::vector<unsigned short> SyncBandwidth::convertString(std::string bandwidth) 
         if(bandwidth[i] == '.') {
             output.push_back(stoi(bandwidth.substr(prevIndex, i - prevIndex)));
             prevIndex = i;
-        }
-    }
-
-    return output;
-}
-
-template<typename T>
-void SyncBandwidth::connectToNode(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage) {
-    if(client.connectToServer(ip, port, communicate, initialMessage) == true)
-        numOfActiveNodes++;
-}
-
-template<typename T>
-void SyncBandwidth::connectToNodeOnion(std::vector<NodeInfo> nodes, std::string (T::*communicate)(std::string), std::string initialMessage) {
-    if(onion.connectToServer(nodes, initialMessage, communicate) == true)
-        numOfActiveNodes++;
-}
-
-std::string SyncBandwidth::communicate(std::string input) {
+        }void validate()string input) {
     unsigned long nodebias = bias;
     bias = 0;
 
