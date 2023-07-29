@@ -151,8 +151,8 @@ std::string SyncKnownNodes::communicate(std::string input) {
     if(input[0] == '0') {    // Receive the number of known nodes on the network
         input.erase(0);
 
-        if(knownnodes.size() < stoi(input))    // If knownnodes are not up to date, send request
-            return '1' + std::to_string(knownnodes.size());
+        if(knownnodes->size() < stoi(input))    // If knownnodes are not up to date, send request
+            return '1' + std::to_string(knownnodes->size());
         
         return "2";     // Quit Message
     }
@@ -186,20 +186,20 @@ std::string SyncKnownNodes::communicate(std::string input) {
 
 std::string SyncKnownNodes::nodeCommunicate(std::string input) {
     if(input[0] == '0')   // Return the number of known nodes
-        return '0' + std::to_string(knownnodes.size());
+        return '0' + std::to_string(knownnodes->size());
 
     if(input[0] == '1') {   // Return the knownnodes after the position
         input.erase(0);
 
         int position = stoi(input);          // The index position they want nodes from
-        if(position >= knownnodes.size())    // Return known nodes are already up-to-date - AKA. Quit
+        if(position >= knownnodes->size())    // Return known nodes are already up-to-date - AKA. Quit
             return "/quit";
         
         // If the client is requesting all the known nodes (minus the default starting ones)
         if(position <= 5) {
             std::vector<NodeDetails> allNodes;
 
-            for(int i = 0; i < knownNodes.size(); i++)
+            for(int i = 0; i < knownNodes->size(); i++)
                 allNodes.push_back(knownNodes[i]);
         
             // Send the function index identifier + the compressed known nodes
@@ -209,7 +209,7 @@ std::string SyncKnownNodes::nodeCommunicate(std::string input) {
 
         // Fill the node vector to the requested size
         std::vector<NodeDetails> temp;
-        for(int i = position; i < knownnodes.size(); i++)
+        for(int i = position; i < knownnodes->size(); i++)
             temp.push_back(knownnodes[i]);
 
         return convertNode(&temp);
@@ -226,7 +226,7 @@ void SyncKnownNodes::sync(std::vector<NodeDetails>* knownNodes) {
     std::thread v(validate());        // Validate the known nodes list
 
     while(1) {
-        for(int i = 0; i < knownnodes.size(); i++) {     // Run the client
+        for(int i = 0; i < knownnodes->size(); i++) {     // Run the client
             std::thread c(connectToNode(knownnodes[i].ip, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
         
             // Pass through the node bias
@@ -243,7 +243,7 @@ void SyncKnownNodes::sync(std::vector<NodeDetails>* knownNodes, std::vector<Node
     std::thread v(validate());        // Validate the known nodes list
 
     while(1) {
-        for(int i = 0; i < knownnodes.size(); i++) {   // Run the onion-client
+        for(int i = 0; i < knownnodes->size(); i++) {   // Run the onion-client
             NodeInfo n;
             n.address = knownnodes[i].address;
             n.location.address = knownnodes[i].ip;
@@ -269,7 +269,7 @@ void SyncKnownNodes::nodeSync(std::vector<NodeDetails>* knownNodes) {
     std::thread v(validate());                            // Validate the known nodes list
 
     while(1) {
-        for(int i = 0; i < knownnodes.size(); i++) {      // Run the client
+        for(int i = 0; i < knownnodes->size(); i++) {      // Run the client
             std::thread c(connectToNode(knownnodes[i].ip, 8081, communicate, '0'));    // Initially request the # of known nodes on the network
 
             // Pass through the node bias
@@ -287,7 +287,7 @@ void SyncKnownNodes::nodeSync(std::vector<NodeDetails>* knownNodes, std::vector<
     std::thread v(validate());                            // Validate the known nodes list
 
     while(1) {
-        for(int i = 0; i < knownnodes.size(); i++) {     // Run the onion-client
+        for(int i = 0; i < knownnodes->size(); i++) {     // Run the onion-client
             NodeInfo n;
             n.address = knownnodes[i].address;
             n.location.address = knownnodes[i].ip;
