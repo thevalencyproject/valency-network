@@ -15,10 +15,12 @@ Sync::Sync(bool node, std::string configurationPath, std::string blockchainPath,
     case 0:
         syncKnownNodes.sync(knownNodes);
         syncBlockchain.sync(blockchain, knownNodes);
+        syncBandwidth.sync(bandwidth, knownNodes);
         break;
     case 1:
         syncKnownNodes.nodeSync(knownNodes);
         syncBlockchain.nodeSync(blockchain, knownNodes);
+        syncBandwidth.nodeSync(bandwidth, knownNodes);
         break;
     }
 }
@@ -37,10 +39,12 @@ Sync::Sync(bool node, std::string configurationPath, std::string blockchainPath,
     case 0:
         syncKnownNodes.sync(knownNodes, nodes);
         syncBlockchain.sync(blockchain, knownNodes, nodes);
+        syncBandwidth.sync(bandwidth, knownNodes, nodes);
         break;
     case 1:
         syncKnownNodes.nodeSync(knownNodes, nodes);
         syncBlockchain.nodeSync(blockchain, knownNodes, nodes);
+        syncBandwidth.nodeSync(bandwidth, knownNodes, nodes);
         break;
     }
 }

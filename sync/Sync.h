@@ -2,6 +2,7 @@
 #define SYNC_H
 
 #include "nodes/SyncKnownNodes.h"
+#include "bandwidth/SyncBandwidth.h"
 #include "blockchain/SyncBlockchain.h"
 #include "local-save/configuration/SaveConfiguration.h"
 
@@ -11,6 +12,7 @@ struct Sync {
     Blockchain blockchain;
     Configuration configuration;
     std::vector<Position4D> knownNodes;
+    std::vector<unsigned short> bandwidth;
     std::string blockchainFilepath;
     std::string knownNodesFilepath;
     std::string configurationFilepath;
@@ -18,6 +20,7 @@ struct Sync {
     // The syncing/save frameworks for each object
     SyncBlockchain syncBlockchain(&configuration);
     SyncKnownNodes syncKnownNodes(&configuration);
+    SyncBandwidth syncBandwidth(&configuration);
     SaveConfiguration saveConfiguration;                // Network Configuration is not synced
 
     // Starts syncing the blockchain, activeNodes, and knownNodes on construction
