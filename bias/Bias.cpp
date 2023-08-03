@@ -1,13 +1,23 @@
 #include "Bias.h"
 
 
-Bias::Bias(Blockchain* blockchain, std::vector<OtherNodes>* nodes) {
+Bias::Bias(Blockchain* blockchain, std::vector<OtherNodes>* nodes, std::vector<unsigned short>* bandwidth) {
+    previousBandwidth = &bandwidth;     // Set the previous bandwidth vector - nodebias takes away bandwidth on destruction
+    otherNodes = nodes;
+
     while(1)
-        std::thread bias(refreshBias(blockchain, nodes));   // Constantly refresh biases
+        std::thread bias(refreshBias(blockchain, nodes, bandwidth));   // Constantly refresh biases
+}
+Bias::~Bias() {                         // Remove the bandwidth bias (calculated locally)
+    for(int i = 0; i < otherNodes.size(); i++)
+        otherNodes[i].bias = otherNodes[i].bias - previousBandwidth[i];
 }
 
+
 // So far, this bias function runs 100% on proof-of-stake, however, bias will be added based on node bandwidth (this will be dynamic like the whitepaper states)
-void Bias::refreshBias(Blockchain* blockchain, std::vector<OtherNodes>* nodes) {
+void Bias::refreshBias(Blockchain* blockchain, std::vector<OtherNodes>* nodes, std::vector<unsigned short>* bandwidth) {
+
+
     for(int i = 0; i < blockchain->numOfShards; i++) {   // Loop through each shard in the blockchain
         for(int j = 0; j < blockchain->length; j++) {    // Loop through each block in each shard
 
@@ -27,6 +37,13 @@ void Bias::refreshBias(Blockchain* blockchain, std::vector<OtherNodes>* nodes) {
                         // Subtract transaction amount from bias
                         nodes[k].details.bias = nodes[k].details.bias - blockchain->chain[i].shard[j].signature.data.transactionAmount;
                     }
+
+                    // Update bandwidth by adding bandwidth scores to node biases (after subtracting from prevBandwidth values)
+                    for(int i = 0; i < nodes.size(); i++) {
+                        nodes[i].bias = nodes[i].bias - previousBandwidth[i];
+                        nodes[i].bias = nodes[i].bias + bandwidth[i];
+                    }
+                    previousBandwidth = &bandwidth;
                 }
             }
         }
@@ -35,7 +52,7 @@ void Bias::refreshBias(Blockchain* blockchain, std::vector<OtherNodes>* nodes) {
     std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Pause for 5ms
 }
 
-void Bias::refreshBias(Blockchain* blockchain, std::string nodePublicAddress, std::vector<OtherNodes>* nodes) {
+void Bias::refreshBias(Blockchain* blockchain, std::string nodePublicAddress, std::vector<unsigned short>* bandwidth, std::vector<OtherNodes>* nodes) {
     unsigned int bias;
     for(int i = 0; i < blockchain->numOfShards; i++) {   // Loop through each shard in the blockchain
         for(int j = 0; j < blockchain->length; j++) {    // Loop through each block in each shard
