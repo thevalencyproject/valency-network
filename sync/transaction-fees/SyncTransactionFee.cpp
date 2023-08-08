@@ -31,8 +31,8 @@ void SyncTransactionFee::syncFee(std::vector<NodeDetails>* knownNodes) {
                 numOfActiveNodes++;    // Use the syncknownnodes framework port to determine if a node is active or not
         
         // Calculate the transaction fee's (THIS IS BASIC - NEEDS REVISION)
-        double basefee = (config.networkLoad + numOfActiveNodes) / 10000;    // The base fee per single transaction
-        for(int i = 1; i <= 10; i++)                                         // For each transaction after, multiply, and add 1:
+        double basefee = (theoreticalMaxNetworkBandwidth - currentNetworkBandwidth + numOfActiveNodes) / 10000;    // The base fee per single transaction
+        for(int i = 1; i <= 10; i++)                                                                               // For each transaction after, multiply, and add 1:
             transactionfees.push_back((basefee * i) + i);
     }
 }
