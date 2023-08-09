@@ -34,6 +34,20 @@ void SyncTransactionFee::syncFee(std::vector<NodeDetails>* knownNodes) {
         double basefee = (theoreticalMaxNetworkBandwidth - currentNetworkBandwidth + numOfActiveNodes) / 10000;    // The base fee per single transaction
         for(int i = 1; i <= 10; i++)                                                                               // For each transaction after, multiply, and add 1:
             transactionfees.push_back((basefee * i) + i);
+
+        // Get Theoretical Max
+        if(theoreticalUpdateTimer > std::chrono::system_clock::now() - std::chrono::minutes(10)) {    // If the time has increased by 10 minutes
+            for(int i = 0; i < &knownNodes.size(); i++) {                // Update the max individual node bandwidths
+                theoreticalMaxNetworkBandwidth - nodebandwidths[i];      // Subtract the max for the current node
+
+                if(nodebandwidths[i] > &knownNodes[i].bandwidth)         // Update if the max is higher than previous highs
+                    nodebandwidths[i] = &knownNodes[i].bandwidth;
+
+                theoreticalMaxNetworkBandwidth + nodebandwidths[i];      // Add the new/existing max for the current node
+            }
+            
+            theoreticalUpdateTimer = std::chrono::system_clock::now();   // Reset the timer
+        }
     }
 }
 
