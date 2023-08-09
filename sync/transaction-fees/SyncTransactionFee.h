@@ -20,6 +20,8 @@
         -> Updates the transaction fee IF a new block is added AND the previous transaction fee has expired(timed out) */
 class SyncTransactionFee {
 private:
+    std::chrono::duration theoreticalUpdateTimer;   // Update the theoreticalMaxNetworkBandwidth every 10m
+    std::vector<unsigned int> nodebandwidths;       // The max bandwidth of each node (of all time) - used to get the theoretical maximum network bandwidth
     unsigned int theoreticalMaxNetworkBandwidth;    // [IN MB/s] The theoretical max bandwidth (max bandwidth for single node * numOfActiveNodes)
     unsigned int currentNetworkBandwidth;           // [IN MB/s] The bandwidth of each active node added up
 
