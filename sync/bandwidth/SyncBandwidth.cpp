@@ -38,10 +38,11 @@ void SyncBandwidth::validate() {
         }
 
         // Update the activebandwidth vector with the highest instance counter in the counter vector to the end of the knownnodes vector
-        activebandwidth->clear();
-        for(int i = 0; i < unverifiedbandwidth[index].size(); i++)
-            activebandwidth->push_back(unverifiedbandwidth[index][i]);
-        
+        for(int i = 0; i < knownnodes.size(); i++) {
+            knownnodes[i].bandwidth = unverifiedbandwidth[index][i];
+            activebandwidth[i] = knownnodes[i].bandwidth;
+        }
+
         unverifiedbandwidth.clear();    // Clear the vector
         counter.clear();
         highest = 0;
