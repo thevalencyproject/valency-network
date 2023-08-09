@@ -36,14 +36,20 @@ void SyncTransactionFee::syncFee(std::vector<NodeDetails>* knownNodes) {
             transactionfees.push_back((basefee * i) + i);
 
         // Get Theoretical Max
-        if(theoreticalUpdateTimer > std::chrono::system_clock::now() - std::chrono::minutes(10)) {    // If the time has increased by 10 minutes
-            for(int i = 0; i < &knownNodes.size(); i++) {                // Update the max individual node bandwidths
-                theoreticalMaxNetworkBandwidth - nodebandwidths[i];      // Subtract the max for the current node
+        if(bandwidthUpdateTimer > std::chrono::system_clock::now() - std::chrono::minutes(10)) {    // If the time has increased by 10 minutes
+            for(int i = 0; i < &knownNodes.size(); i++) {                   // Update the max individual node bandwidths + theoreticalMaxNetworkBandwidth + current network bandwidth (combined network bandwidth)
+                // Theoretical Max Network Bandwidth
+                theoreticalMaxNetworkBandwidth = theoreticalMaxNetworkBandwidth - nodemaxbandwidths[i];      // Subtract the max for the current node
 
-                if(nodebandwidths[i] > &knownNodes[i].bandwidth)         // Update if the max is higher than previous highs
-                    nodebandwidths[i] = &knownNodes[i].bandwidth;
+                if(nodemaxbandwidths[i] > &knownNodes[i].bandwidth)         // Update if the max is higher than previous highs
+                    nodemaxbandwidths[i] = &knownNodes[i].bandwidth;
 
-                theoreticalMaxNetworkBandwidth + nodebandwidths[i];      // Add the new/existing max for the current node
+                theoreticalMaxNetworkBandwidth = theoreticalMaxNetworkBandwidth + nodemaxbandwidths[i];      // Add the new/existing max for the current node
+
+                // Current Network Bandwidth
+                currentNetworkBandwidth = currentNetworkBandwidth - currentnodebandwidths[i];
+                currentNetworkBandwidth = currentNetworkBandwidth + &knownNodes[i].bandwidth;
+                currentnodebandwidths[i] = &knownNodes[i].bandwidth;
             }
             
             theoreticalUpdateTimer = std::chrono::system_clock::now();   // Reset the timer

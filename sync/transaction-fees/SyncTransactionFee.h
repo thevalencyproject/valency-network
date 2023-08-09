@@ -20,10 +20,11 @@
         -> Updates the transaction fee IF a new block is added AND the previous transaction fee has expired(timed out) */
 class SyncTransactionFee {
 private:
-    std::chrono::duration theoreticalUpdateTimer;   // Update the theoreticalMaxNetworkBandwidth every 10m
-    std::vector<unsigned int> nodebandwidths;       // The max bandwidth of each node (of all time) - used to get the theoretical maximum network bandwidth
-    unsigned int theoreticalMaxNetworkBandwidth;    // [IN MB/s] The theoretical max bandwidth (max bandwidth for single node * numOfActiveNodes)
-    unsigned int currentNetworkBandwidth;           // [IN MB/s] The bandwidth of each active node added up
+    std::chrono::duration bandwidthUpdateTimer;         // Update the theoreticalMaxNetworkBandwidth every 10m
+    std::vector<unsigned int> nodemaxbandwidths;        // The max bandwidth of each node (of all time) - used to get the theoretical maximum network bandwidth
+    std::vector<unsigned int> currentnodebandwidths;    // The current bandwidths of each node
+    unsigned int theoreticalMaxNetworkBandwidth;        // [IN MB/s] The theoretical max bandwidth (max bandwidth for single node * numOfActiveNodes)
+    unsigned int currentNetworkBandwidth;               // [IN MB/s] The bandwidth of each active node added up
 
     std::vector<double> transactionfees;   // Contains all transaction fee's for every combination of #ofTransactions & #ofOnionRoutingNodes
     std::stringstream expiry;              // Contains the expiry time for the transaction fee's (do expiry.str() to get string version)
