@@ -1,6 +1,12 @@
 #include "SyncBandwidth.h"
 
 
+/* NEED TO DO:
+    -> implemnet sentBandwidth into communication functions where 
+       size (address + unsigned long bandwidth) is less than the 
+       entire knownnode bandwidth vector (256 per node > 8 per node): 
+       if >3.1% of nodes are active, use entire knownnodes vector 
+       with unsigned long (or 8 bit equivalent) */
 void SyncBandwidth::validate() {
     while(1) {
         while(unverifiedNodes.size() < numOfActiveNodes - 2)        // Wait until unverifiedNodes fills up
@@ -64,7 +70,7 @@ std::string SyncBandwidth::convertBandwidth(std::vector<unsigned short>* bandwid
 }
 
 unsigned short SyncBandwidth::convertString(std::string bandwidth) {
-    return stoi(bandwidth);
+    return stoul(bandwidth);
 }
 
 std::vector<unsigned short> SyncBandwidth::convertString(std::string bandwidth) {
@@ -73,7 +79,7 @@ std::vector<unsigned short> SyncBandwidth::convertString(std::string bandwidth) 
     int prevIndex = 0;
     for(int i = 0; i < bandwidth.size(); i++) {
         if(bandwidth[i] == '.') {
-            output.push_back(stoi(bandwidth.substr(prevIndex, i - prevIndex)));
+            output.push_back(stoul(bandwidth.substr(prevIndex, i - prevIndex)));
             prevIndex = i;
         }
     }
@@ -100,7 +106,7 @@ std::string SyncBandwidth::communicate(std::string input) {
     if(input[0] == '0') {    // Get node bandwidth vector from the node
         input.erase(0);      // Erase the function index identifier
 
-        std::pair<std::vector<>, unsigned long> temp;
+        std::pair<std::vector<unsigned long>, unsigned long> temp;
         temp.first = convertString(input);
         temp.second = nodebias;
         unverifiedbandwidth.push_back(nodebias);

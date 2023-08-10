@@ -9,8 +9,15 @@
 #include "valency-core/networking/onion-routing/Onion.h"
 
 
+/* Needs to send activebandwidth with node address to reduce bandwidth overhead */
 class SyncBandwidth {
 private:
+    /* Used for sending bandwidth between nodes and clients on the network to reduce 
+       overhead (doesnt send all knownnodes bandwidths, only the ones that are active 
+          -> this can be used to determine activenodes down the line): Pair: String 
+             is the node address and unsigned short is the node bandwidth. */
+    std::vector<std::pair<std::string, unsigned short>> sentBandwidth;
+
     std::vector<unsigned short>* activebandwidth;     // The bandwidth value for every node - index corresponds to knownnode index
     Configuration* configuration;                     // A pointer to the network configuration
     
