@@ -55,7 +55,8 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletb
     if(getTransactionFee(1, numOfOnionNodes) + amount > walletbalance)
         return;
 
-    RingSignature sig = signature.generateRingSignature(amount, receiver, privateKey, decoys);     // Generate the signature
+    // Generate the signature
+    RingSignature sig = signature.generateRingSignature(amount, receiver, privateKey, decoys);
 
     // Send the ring signature to all the active nodes on the network using onion routing
     
@@ -66,12 +67,20 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletb
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletbalance, std::string privateKey, std::vector<std::string> receivers, std::vector<double> amounts, unsigned short decoys) {
     // Check that the number of decoys is valid (these min/max still need to be decided)
+    if(decoys < 5 || decoys > 20)
+        decoys = 10;
 
     // Check that the wallet has enough balance to cover the transaction amount + potential fee's
+    int totalamount;
+    for(int i = 0; i < amounts.size(); i++)
+        totalamount = amounts[i] + totalamount;
+    if(totalamount + getTransactionFee(amounts.size()) > walletbalance)
+        return;
 
+    // Generate the signatures
     std::vector<RingSignature> sigs;
     for(int i = 0; i < receivers.size(); i++)
-        sigs.push_back(signature.generateRingSignature(amounts[i], receivers[i], privateKey, decoys));     // Generate the signatures
+        sigs.push_back(signature.generateRingSignature(amounts[i], receivers[i], privateKey, decoys));
 
     // Send the ring signatures to all the active nodes on the network
 
@@ -82,12 +91,24 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletb
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletbalance, std::string privateKey, std::vector<std::string> receivers, std::vector<double> amounts, unsigned short decoys, int numOfOnionNodes) {
     // Check that the number of decoys is valid (these min/max still need to be decided)
+    if(decoys < 5 || decoys > 20)
+        decoys = 10;
+
+    // Check that the number of onion nodes are valid - if invalid, it will set it to the default of 3
+    if(numOfOnionNodes < 3 || numOfOnionNodes > 5)
+        numOfOnionNodes = 3;
 
     // Check that the wallet has enough balance to cover the transaction amount + potential fee's
+    int totalamount;
+    for(int i = 0; i < amounts.size(); i++)
+        totalamount = amounts[i] + totalamount;
+    if(totalamount + getTransactionFee(amounts.size()) > walletbalance)
+        return;
 
+    // Generate the signatures
     std::vector<RingSignature> sigs;
     for(int i = 0; i < receivers.size(); i++)
-        sigs.push_back(signature.generateRingSignature(amounts[i], receivers[i], privateKey, decoys));     // Generate the signatures
+        sigs.push_back(signature.generateRingSignature(amounts[i], receivers[i], privateKey, decoys));
 
     // Send the ring signatures to all the active nodes on the network using onion routing
 
