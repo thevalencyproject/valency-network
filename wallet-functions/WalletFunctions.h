@@ -41,10 +41,10 @@ public:
     std::pair<bool, TransactionInfo> sendTransaction(double walletbalance, std::string privateKey, std::vector<std::string> receivers, std::vector<double> amounts, unsigned short decoys, int numOfOnionNodes);    // Multi Transaction - onion routing
 
     // Getter Functions
-    std::pair<std::string, double> getTransactionFee(int numOfTransactions);                                            // Gets the transaction fee from the Sync Framework - Returns the transaction fee and expiration time (min 30 seconds)
-    std::pair<std::string, double> getTransactionFee(int numOfTransactions, bool onionRouting, int numOfOnionNodes);    // Gets the transaction fee from the Sync Framework - Returns the transaction fee and expiration time (min 30 seconds) - Onion Routing
-    Block getBlock(unsigned int shard, unsigned int block);                                                             // Get a specific block from the Sync Framework
-    std::vector<Block> getBlocks(std::vector<unsigned int> shards, std::vector<unsigned int> blocks);                   // Gets the requested blocks - ensure shard and block vector index match
+    std::pair<std::string, double> getTransactionFee(int numOfTransactions);                             // Gets the transaction fee from the Sync Framework - Returns the transaction fee and expiration time (min 30 seconds)
+    std::pair<std::string, double> getTransactionFee(int numOfTransactions,  int numOfOnionNodes);       // Gets the transaction fee from the Sync Framework - Returns the transaction fee and expiration time (min 30 seconds) - Onion Routing
+    Block getBlock(unsigned int shard, unsigned int block);                                              // Get a specific block from the Sync Framework
+    std::vector<Block> getBlocks(std::vector<unsigned int> shards, std::vector<unsigned int> blocks);    // Gets the requested blocks - ensure shard and block vector index match
 
     // Scanner Functions
     std::vector<Block> relatedBlocks(std::string privateKey);                                                 // Scans the blockchain and returns a vector of any blocks that are related to the privateKey inputted (sender, receiver, or used as decoy in TRS!)

@@ -25,8 +25,8 @@ std::pair<std::string, std::string> WalletFunctions::generateStealthKeyPair(std:
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletbalance, std::string privateKey, std::string receiver, double amount, unsigned short decoys) {
     // Check that the number of decoys is valid (these min/max still need to be decided)
-    if(decoys < 5 || decoys > 20)     // If there is an invalid amount of decoys, return nothing
-        return;
+    if(decoys < 5 || decoys > 20)
+        decoys = 10;
 
     // Check that the wallet has enough balance to cover the transaction amount + potential fee's
     if(getTransactionFee(1) + amount > walletbalance)
@@ -35,7 +35,7 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletb
     RingSignature sig = signature.generateRingSignature(amount, receiver, privateKey, decoys);     // Generate the signature
 
     // Send the ring signature to all the active nodes on the network
-    
+
 
     // Get the replies from all active nodes, and if the number of transaction successes outweight the number of transaction failed, the transaction has gone through!
     //  -> This takes into account the node bias system
@@ -44,8 +44,16 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletb
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletbalance, std::string privateKey, std::string receiver, double amount, unsigned short decoys, int numOfOnionNodes) {
     // Check that the number of decoys is valid (these min/max still need to be decided)
+    if(decoys < 5 || decoys > 20)
+        decoys = 10;
+
+    // Check that the number of onion nodes are valid - if invalid, it will set it to the default of 3
+    if(numOfOnionNodes < 3 || numOfOnionNodes > 5)
+        numOfOnionNodes = 3;
 
     // Check that the wallet has enough balance to cover the transaction amount + potential fee's
+    if(getTransactionFee(1, numOfOnionNodes) + amount > walletbalance)
+        return;
 
     RingSignature sig = signature.generateRingSignature(amount, receiver, privateKey, decoys);     // Generate the signature
 
@@ -93,7 +101,7 @@ std::pair<std::string, double> WalletFunctions::getTransactionFee(int numOfTrans
     sync.getTransactionFee(numOfTransactions);
 }
 
-std::pair<std::string, double> WalletFunctions::getTransactionFee(int numOfTransactions, bool onionRouting, int numOfOnionNodes) {
+std::pair<std::string, double> WalletFunctions::getTransactionFee(int numOfTransactions, int numOfOnionNodes) {
     // Returns a std::pair from the Sync framework - dependant on the number of transactions and number of onion nodes (sync keeps each possible outcome in a vector)
     sync.getTransactionFee(numOfTransactions, numOfOnionNodes);
 }
