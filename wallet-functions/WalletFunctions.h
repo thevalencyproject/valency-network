@@ -47,7 +47,9 @@ public:
     std::vector<Block> getBlocks(std::vector<unsigned int> shards, std::vector<unsigned int> blocks);    // Gets the requested blocks - ensure shard and block vector index match
 
     // Scanner Functions
+    std::vector<Block> relatedBlocks(std::string stealthKey);                                                 // Scans the blockchain and returns a vector of any blocks that are related to the one-time-stealth key inputted (sender, receiver, or used as decoy in TRS!)
     std::vector<Block> relatedBlocks(std::string privateKey);                                                 // Scans the blockchain and returns a vector of any blocks that are related to the privateKey inputted (sender, receiver, or used as decoy in TRS!)
+    std::vector<Block> relatedBlocks(std::string publicKey);                                                 // Scans the blockchain and returns a vector of any blocks that are related to the privateKey inputted (sender, receiver, or used as decoy in TRS!)
     std::vector<TransactionInfo> relatedTransactions(std::string privateKey);                                 // Scans the blockchain and returns a vector of any transactions that are related to the privateKey inputted
     double walletBalanceCheck(std::string privateKey);                                                        // Checks the wallet balance from the blockchain
     double walletBalanceCheck(std::string privateKey, std::vector<TransactionInfo> transactionRepository);    // Checks the wallet balance from the inputted transaction repository
