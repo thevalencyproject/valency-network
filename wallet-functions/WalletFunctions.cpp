@@ -149,6 +149,8 @@ std::vector<Block> WalletFunctions::relatedBlocksStealth(std::string stealthKey)
         for(int j = 0; j < sync.blockchain.chain[i].shard.size(); j++)                             //  -> Each Block
             if(sync.blockchain.chain[i].shard[i].ringsignature.data.receiverkey == stealthKey)     // Check the receiver key
                 output.push_back(sync.blockchain.chain[i].shard[i]);
+
+    return output;
 }
 
 std::vector<Block> WalletFunctions::relatedBlocksPrivate(std::string privateKey) {
@@ -169,14 +171,14 @@ std::vector<Block> WalletFunctions::relatedBlocksPublic(std::string publicKey) {
     sync.blockchain.chain.size();   // num of shards
     sync.blockchain.chain[i].shard[i];  // Block in a shard
 
-    for(int i = 0; i < sync.blockchain.chain.size(); i++) { // Go through each shard
-        for(int j = 0; j < sync.blockchain.chain[i].shard.size(); j++) {
-            // Go through each decoy in the block
-            for(int k = 0; j < )
-            sync.blockchain.chain[i].shard[i].ringsignature.data.receiverkey
-            if()
-        }
-    }
+    std::vector<Block> output;
+    for(int i = 0; i < sync.blockchain.chain.size(); i++)                                                // Go through each shard
+        for(int j = 0; j < sync.blockchain.chain[i].shard.size(); j++)                                   // Go through each decoy in the block
+            for(int k = 0; k < sync.blockchain.chain[i].shard[i].ringsignature.publicKeys.size(); k++)   // Go through each decoy ring
+                if(sync.blockchain.chain[i].shard[i].ringsignature.publicKeys[k] == publicKey)           // Check the public key
+                    output.push_back(sync.blockchain.chain[i].shard[i]);
+
+    return output;
 }
 
 std::vector<TransactionInfo> WalletFunctions::relatedTransactions(std::string privateKey) {
