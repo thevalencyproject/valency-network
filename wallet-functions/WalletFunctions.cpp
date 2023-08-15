@@ -154,23 +154,10 @@ std::vector<Block> WalletFunctions::relatedBlocksStealth(std::string stealthKey)
 }
 
 std::vector<Block> WalletFunctions::relatedBlocksPrivate(std::string privateKey) {
-    sync.blockchain.chain.size();   // num of shards
-    sync.blockchain.chain[i].shard[i];  // Block in a shard
-
-    for(int i = 0; i < sync.blockchain.chain.size(); i++) { // Go through each shard
-        for(int j = 0; j < sync.blockchain.chain[i].shard.size(); j++) {
-            // Go through each decoy in the block
-            for(int k = 0; j < )
-            sync.blockchain.chain[i].shard[i].ringsignature.data.receiverkey
-            if()
-        }
-    }
+    
 }
 
 std::vector<Block> WalletFunctions::relatedBlocksPublic(std::string publicKey) {
-    sync.blockchain.chain.size();   // num of shards
-    sync.blockchain.chain[i].shard[i];  // Block in a shard
-
     std::vector<Block> output;
     for(int i = 0; i < sync.blockchain.chain.size(); i++)                                                // Go through each shard
         for(int j = 0; j < sync.blockchain.chain[i].shard.size(); j++)                                   // Go through each decoy in the block
