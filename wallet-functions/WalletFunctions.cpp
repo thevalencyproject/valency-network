@@ -54,7 +54,7 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletb
     }
 
     // Once the transaction is on the blockchain, get the transaction info:
-    
+
 }
 
 std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletbalance, std::string privateKey, std::string receiver, double amount, unsigned short decoys, int numOfOnionNodes) {
@@ -97,10 +97,23 @@ std::pair<bool, TransactionInfo> WalletFunctions::sendTransaction(double walletb
     for(int i = 0; i < receivers.size(); i++)
         sigs.push_back(signature.generateRingSignature(amounts[i], receivers[i], privateKey, decoys));
 
-    // Send the ring signatures to all the active nodes on the network
+    // Send the ring signature to all the active nodes on the network
+    for(int i = 0; i < sync.knownnodes.size(); i++) {   // The number of nodes on the network
+        client.connectToServer(knownnodes.ip, knownnodes.port, NULL, std::to_string(sig));
+    }
 
-    // Get the replies from all active nodes, and if the number of transaction successes outweight the number of transaction failed, the transaction has gone through!
-    //  -> This takes into account the node bias system
+    // Loop until the transaction shows up on chain (gets a cooldown of ___ seconds/minutes)
+    int timer = 0;
+    while(sync.blockchain.chain.shard.back().ringsignature != sigs.back()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        
+        if(timer == 1000)
+            return;     // Return Error
+
+        timer++;        // Increment timeout timer
+    }
+
+    // Once the transaction is on the blockchain, get the transaction info:
 
 }
 
