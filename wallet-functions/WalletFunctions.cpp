@@ -182,7 +182,7 @@ std::vector<Block> WalletFunctions::relatedBlocksStealth(std::string stealthKey)
 }
 
 std::vector<Block> WalletFunctions::relatedBlocksPrivate(std::string privateKey) {
-    
+    return relatedBlocksPublic(generatePublicKey(privateKey));
 }
 
 std::vector<Block> WalletFunctions::relatedBlocksPublic(std::string publicKey) {
