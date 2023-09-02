@@ -5,3 +5,9 @@ The valency-network repository contains network-specific frameworks which are us
 2. **Valency Wallet:** Similar to the Bitcoin Core wallet - send and receive using this wallet. It is cross-platform with a GUI.
 3. **Valency Lite Wallet:** Contains most of the functionality of the full wallet, however utilises a lightweight, console-based UI and contains less fancy features to improve portability and security.
 4. **Valency Network Developer Tools:** Contains documentation and tools for the usage and maintenance of the network.
+
+# Wallet Functions
+A framework dedicated to the functionality of wallet programs on the Valency Network. This framework can be used to create your own wallet for the Valency Network.
+
+# Node Functions
+A framework dedicated to the functionality of nodes on the Valency Network.
