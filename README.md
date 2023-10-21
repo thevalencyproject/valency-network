@@ -1,5 +1,5 @@
 # The Valency Network
-Contains the code dedicated to the Valency Network. It mainly utilises valency-core frameworks for key functionality.
+Contains the code dedicated to the Valency Network. It mainly utilises valency-core frameworks for key functionality. Including encryption, file reading and writing, etc.
 The valency-network repository contains network-specific frameworks which are used to build the following programs:
 1. **Valency Node:** The program that the nodes on the Valency Network run to keep the network functioning.
 2. **Valency Wallet:** Similar to the Bitcoin Core wallet - send and receive using this wallet. It is cross-platform with a GUI.
